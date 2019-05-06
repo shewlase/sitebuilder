@@ -30,6 +30,13 @@ html,  body
   position: absolute;
 }
 
+#fontSizeInput
+{
+  left: 0vw;
+  bottom: 6vh;
+  position: absolute;
+}
+
 input
 {
   font-family: "Luckiest Guy", cursive;

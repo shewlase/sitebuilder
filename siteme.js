@@ -205,7 +205,7 @@ class Text extends Element
     if(this.isFocus)
     {
       //white when editing text, transparent when not
-      this.color = 'white';
+      this.color = 'rgba(255,255,255,0.8)';
       this.drawAllTabs(ctx);
     }
     else
@@ -282,6 +282,7 @@ function init()
   allTools.push(toolImage);
 
   colorInput = document.getElementById("colorInput");
+  fontSizeInput = document.getElementById("fontSizeInput");
   animate();
   // draw();
 }
@@ -442,6 +443,8 @@ var shapeToCheck;
 window.onmousedown = function(e)
 {
   //check if clicking a tool
+  // focusedElement = null;
+  elementDragging = null;
   leftMouseDown = true;
   for(var i = 0; i < allTools.length; i++)
   {
@@ -541,6 +544,7 @@ window.onmousedown = function(e)
     }
   }
   // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
+
 }
 
 window.onmousemove = function(e)
@@ -682,15 +686,13 @@ window.onmouseup = function(e)
   || elementDragging instanceof BuildImage)
   {
     elementDragging.updateHtmlElement();
-
     elementDragging.htmlElement.focus();
   }
 }
 
 colorInput.addEventListener("keydown", function(event)
 {
-  // Number 13 is enter
-  if (event.keyCode === 13)
+  if (event.keyCode === 13)//enter key
   {
     shapeColor = colorInput.value;
     // divSquare.color = shapeColor;
@@ -706,6 +708,21 @@ colorInput.addEventListener("keydown", function(event)
 
   }
 });
+
+fontSizeInput.onkeydown = function(event)
+{
+  if (event.keyCode === 13)//enter key
+  {
+    var size = fontSizeInput.value;
+    if(focusedElement instanceof Text)
+    {
+      focusedElement.htmlElement.style.fontSize = size+'vw';
+      //need update element size afterwards
+
+      // focusedElement.updateHtmlElement();
+    }
+  }
+}
 
 var imageSelector = document.getElementById('imageSelector');
 imageSelector.addEventListener('change', imageSelect, false);
