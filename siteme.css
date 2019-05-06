@@ -1,0 +1,95 @@
+html,  body
+{
+  margin: 0;
+  overflow-x: hidden;
+}
+
+
+#canvas
+{
+  /* width: 100vw;
+  height: 50vh; */
+  /* width: 800px;
+  height: 800px; */
+  background-color: #fcffe8;
+  /* should be auto?, easier to update other objects on window resize */
+}
+
+#test
+{
+  right: 0;
+  top: 0;
+  color: black;
+  position: absolute;
+}
+
+#colorInput
+{
+  left: 0vw;
+  bottom: 2vh;
+  position: absolute;
+}
+
+input
+{
+  font-family: "Luckiest Guy", cursive;
+}
+
+/* input:focus, textarea:focus
+{
+  background-color: white;
+} */
+
+.headingInput, .heading2Input, .paragraphInput
+{
+  position: absolute;
+  background-color: transparent;
+  /* background-color: rgba(255,255,255,1.0); */
+  border: none;
+  /* pointer-events: none; */
+}
+
+.unfocusable
+{
+  pointer-events: none;
+  user-select: none;
+}
+
+/* input:focus
+{
+  background-color: white;
+} */
+
+.headingInput
+{
+  font-size: 3vw;
+}
+.heading2Input
+{
+  font-size: 2vw;
+}
+.paragraphInput
+{
+  font-size: 1vw;
+  font-family: 'Quicksand', sans-serif;
+  resize: none;
+}
+
+img
+{
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  pointer-events: none;
+}
+
+#imageSelector
+{
+  position: absolute;
+  left: 0;
+  bottom: 200px;
+  width: 10vw;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
