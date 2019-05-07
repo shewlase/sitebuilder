@@ -40,6 +40,7 @@ html,  body
 input
 {
   font-family: "Luckiest Guy", cursive;
+  /* padding: 2vw; */
 }
 
 /* input:focus, textarea:focus

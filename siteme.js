@@ -71,11 +71,12 @@ class Element extends Object
   {
     this.drawWholeArea(ctx);
 
-    //only draw edit areas if focused
-    if(this.isFocus)
-    {
-      this.drawAllTabs(ctx);
-    }
+    //only draw edit areas if focused, moved to global drawWall
+      // so will be drawn above everything
+    // if(this.isFocus)
+    // {
+    //   this.drawAllTabs(ctx);
+    // }
   }
 
   drawAllTabs(ctx)
@@ -205,8 +206,8 @@ class Text extends Element
     if(this.isFocus)
     {
       //white when editing text, transparent when not
-      this.color = 'rgba(255,255,255,0.8)';
-      this.drawAllTabs(ctx);
+      this.color = 'rgba(255,255,255,0.5)';
+      // this.drawAllTabs(ctx);
     }
     else
     {
@@ -315,6 +316,13 @@ function draw()
   for(var i=0; i<allElements.length; i++)
   {
     allElements[i].draw(ctx);
+  }
+  for(var i=0; i<allElements.length; i++)
+  {
+    if(allElements[i].isFocus)
+    {
+      allElements[i].drawAllTabs(ctx);
+    }
   }
   // for(var i=0; i<allHeadings.length; i++)
   // {
