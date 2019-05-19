@@ -239,8 +239,13 @@ class BuildImage extends Element
     this.htmlElement = newHtmlImage;
     this.htmlElement.id = this.id;
     this.ratio = 1;
+
+    this.src = '';
+    this.canvasImage = new Image();
+    this.canvasImage.src = this.src;
+
     // this.htmlElement.src = this.source;
-    document.getElementsByTagName('body')[0].insertBefore(newHtmlImage, colorInput);
+    // document.getElementsByTagName('body')[0].insertBefore(newHtmlImage, colorInput);
     this.updateHtmlElement();
   }
 
@@ -250,6 +255,11 @@ class BuildImage extends Element
     this.htmlElement.style.top = this.y+'px';
     this.htmlElement.style.width = this.width+'px';
     this.htmlElement.style.height = this.height+'px';
+  }
+
+  draw(ctx)
+  {
+    ctx.drawImage(this.canvasImage, this.x, this.y, this.width, this.height);
   }
 }
 
@@ -308,6 +318,7 @@ function drawToolbar(ctx)
   // ctx.fillRect(20, 20, 150, 100);
 }
 
+//dont need this? just draw when changed or have shouldAnimate variable
 function animate()
 {
 	requestAnimationFrame(animate);
@@ -594,6 +605,11 @@ window.onmousedown = function(e)
       console.log('color');
     }
 
+  }
+  //if click within the toolbar
+  if(collides(e.pageX, e.pageY, 5, 5, 0, 0, toolBarWidth, canvasHeight))
+  {
+    nothingClicked = false;
   }
 
   if(nothingClicked)
@@ -889,6 +905,9 @@ function imageSelect(e)
       };
       imgMeasure.src = fr.result;
       image.src = fr.result;
+
+      focusedElement.src = fr.result;
+      focusedElement.canvasImage.src = fr.result;
   };
   fr.readAsDataURL(this.files[0]);
 
