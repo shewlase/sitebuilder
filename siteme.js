@@ -25,6 +25,12 @@ var shapeColor;
 
 var focusedElement;
 var selectedElements;
+
+const RESIZE_TAB = 0;
+const MOVEMENT_TAB = 1;
+const COLOR_TAB = 2;
+
+var mouseX, mouseY;
 // var divSquare = [20, 20, 10, 10];
 
 class Object
@@ -366,10 +372,11 @@ function checkClickTab(clickX, clickY)
 {
   var result = [false, -1];
   var activeTabs = shapeToCheck.tabList;
+  var leway = 20;
   for(var i = 0; i< activeTabs.length; i++)
   {
     var tab = activeTabs[i];
-    if(collides(clickX, clickY, 10, 10, tab[0], tab[1], tab[2], tab[3]))
+    if(collides(clickX-(0.5*leway), clickY-(0.5*leway), leway, leway, tab[0], tab[1], tab[2], tab[3]))
     {
       result[0] = true;
       result[1] = i;
@@ -481,12 +488,13 @@ window.onmousedown = function(e)
   elementDragging = null;
   leftMouseDown = true;
   let nothingClicked = true;
+  let clickPadding = 10;
     //check if clicking a tool
   for(var i = 0; i < allTools.length; i++)
   {
     var tool = allTools[i];
 
-    if(collides(e.pageX, e.pageY, 5, 5, tool.x, tool.y, tool.width, tool.height))
+    if(collides(e.clientX-(0.5*clickPadding), e.clientY-(0.5*clickPadding), clickPadding, clickPadding, tool.x, tool.y, tool.width, tool.height))
     {
       isPlacingNewShape = true;
       leftMouseDown = true;
@@ -525,7 +533,7 @@ window.onmousedown = function(e)
 
     // var tabs = shapeToCheck.tabList;
                                     //if clicked shape/div
-    if(collides(e.pageX, e.pageY, 5, 5, shapeToCheck.x, shapeToCheck.y, shapeToCheck.width, shapeToCheck.height))
+    if(collides(e.pageX-(0.5*clickPadding), e.pageY-(0.5*clickPadding), clickPadding, clickPadding, shapeToCheck.x, shapeToCheck.y, shapeToCheck.width, shapeToCheck.height))
     {
 
       // if(shapeToCheck instanceof Text)
@@ -578,17 +586,17 @@ window.onmousedown = function(e)
                                     //if clicked resize tab
     // if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+shapeToCheck.width, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 2*dragTabSize)
     // && shapeToCheck.isFocus)
-    else if(tabClicked && whichTab == 0)  //tablist[0] = resizeTab, could be RESIZE_TAB (= 0)
+    else if(tabClicked && whichTab == RESIZE_TAB)  //tablist[0] = resizeTab, could be RESIZE_TAB (= 0)
     {
       isResizing = true;
       sizeStartOfDrag = [shapeToCheck.width, shapeToCheck.height];
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
-  }                                   //movement tab
+    }                                   //movement tab
     // else if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+0.5*shapeToCheck.width-0.5*dragTabSize, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 3*dragTabSize)
     // && shapeToCheck.isFocus)
-    else if(tabClicked && whichTab == 1)
+    else if(tabClicked && whichTab == MOVEMENT_TAB)
     {
       if(focusedElement != null)
       {
@@ -609,7 +617,7 @@ window.onmousedown = function(e)
       elementDragging = shapeToCheck;
       break;
   }                                      //color tab
-    else if(tabClicked && whichTab == 2)
+    else if(tabClicked && whichTab == COLOR_TAB)
     {
       //show color picker
         //square with 4 square colors like toolbar
@@ -642,7 +650,8 @@ window.onmousemove = function(e)
   // yDifference = e.pageY - mouseStartOfDrag[1];
 
   //need to separate placing new shape and moving placed shape
-
+  mouseX = e.pageX;
+  mouseY = e.pageY;
   if(isPlacingNewShape)
   {
     xDifference = e.pageX - mouseStartOfDrag[0];
@@ -705,37 +714,11 @@ window.onmousemove = function(e)
     }
   }
 }
-var controlHeld = false;
-window.onkeydown = function(e)
-{
-  switch (e.keyCode) {
-    case 46: //delete
-      if(focusedElement instanceof Element
-      && !(focusedElement instanceof Text))
-      {
-        allElements.splice(allElements.indexOf(focusedElement), 1);
-      }
-      break;
-    case 17: //control key
-      controlHeld = true;
-      break;
 
-  }
-}
-
-window.onkeyup = function(e)
-{
-  switch (e.keyCode) {
-    case 17: //control key
-      controlHeld = false;
-      break;
-  }
-}
 
 var activeInput;
 window.onmouseup = function(e)
 {
-
   setAllTextFocusable(true);
   if(isPlacingNewShape)
   {
@@ -749,7 +732,7 @@ window.onmouseup = function(e)
       {
         // var droppedShape = new Shape('square', elementDragging.x,   elementDragging.y , elementDragging.width, elementDragging.height, elementDragging.color ,'square');
         //id should be 'square'+allElements.length, editable in text area
-        var droppedShape = new Element('square', elementDragging.x,   elementDragging.y , elementDragging.width, elementDragging.height, elementDragging.color ,'square');
+        var droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'square');
         allElements.push(droppedShape);
         // droppedShape.isFocus = true;
         focusedElement = droppedShape;
@@ -830,17 +813,56 @@ window.onmouseup = function(e)
       elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
   }
-  if(elementDragging != null)
-  {
-    checkAutoPosition(elementDragging);
-    checkAutoCenter(elementDragging);
-  }
+
+
 
   if(elementDragging instanceof Text
   || elementDragging instanceof BuildImage)
   {
     elementDragging.updateHtmlElement();
     elementDragging.htmlElement.focus();
+  }
+  else //only auto pos and center divs
+  {
+    if(elementDragging != null)
+    {
+      checkAutoPosition(elementDragging);
+      checkAutoCenter(elementDragging);
+    }
+  }
+}
+
+var controlHeld = false;
+window.onkeydown = function(e)
+{
+  switch (e.keyCode) {
+    case 46: //delete
+      if(focusedElement instanceof Element
+      && !(focusedElement instanceof Text))
+      {
+        allElements.splice(allElements.indexOf(focusedElement), 1);
+        selectedElements.splice(allElements.indexOf(focusedElement), 1);
+      }
+      break;
+    case 17: //control key
+      controlHeld = true;
+      break;
+    case 68: //D key
+      if(!(focusedElement instanceof Text))
+      {
+        placeDiv(mouseX, mouseY);
+      }
+      break;
+
+  }
+}
+
+window.onkeyup = function(e)
+{
+  switch (e.keyCode) {
+    case 17: //control key
+      controlHeld = false;
+      break;
   }
 }
 
@@ -877,6 +899,17 @@ fontSizeInput.onkeydown = function(event)
     }
   }
 }
+
+function placeDiv(x, y)
+{
+  var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
+  allElements.push(droppedShape);
+  // droppedShape.isFocus = true;
+  focusedElement = droppedShape;
+  selectedElements = [];
+  selectedElements.push(droppedShape);
+}
+
 
 var imageSelector = document.getElementById('imageSelector');
 imageSelector.addEventListener('change', imageSelect, false);
