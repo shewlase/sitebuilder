@@ -238,6 +238,7 @@ class BuildImage extends Element
     var newHtmlImage = document.createElement('img');
     this.htmlElement = newHtmlImage;
     this.htmlElement.id = this.id;
+    this.ratio = 1;
     // this.htmlElement.src = this.source;
     document.getElementsByTagName('body')[0].insertBefore(newHtmlImage, colorInput);
     this.updateHtmlElement();
@@ -529,6 +530,7 @@ window.onmousedown = function(e)
       // selectedElements = [];
         if(selectedElements.length < 2)
         {
+          selectedElements = [];
           selectedElements[0] = focusedElement;
         }
       }
@@ -651,8 +653,20 @@ window.onmousemove = function(e)
   {
     xDifference = e.pageX - mouseStartOfDrag[0];
     yDifference = e.pageY - mouseStartOfDrag[1];
-    elementDragging.width = sizeStartOfDrag[0] + xDifference;
-    elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    //if image, keep original ratio (ratio = width/height)
+    if(shapeToCheck instanceof BuildImage)
+    {
+      let ratio = elementDragging.ratio;
+      elementDragging.width = sizeStartOfDrag[0] + xDifference;
+      elementDragging.height = elementDragging.width/ratio;
+      // elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    }
+    else
+    {
+      elementDragging.width = sizeStartOfDrag[0] + xDifference;
+      elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    }
+
     if(shapeToCheck instanceof Text)
     {
       // var input = document.getElementById(elementDragging.id);
@@ -776,8 +790,18 @@ window.onmouseup = function(e)
   else if(isResizing)
   {
     isResizing = false;
-    elementDragging.width = sizeStartOfDrag[0] + xDifference;
-    elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    if(shapeToCheck instanceof BuildImage)
+    {
+      let ratio = elementDragging.ratio;
+      elementDragging.width = sizeStartOfDrag[0] + xDifference;
+      elementDragging.height = elementDragging.width/ratio;
+      // elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    }
+    else
+    {
+      elementDragging.width = sizeStartOfDrag[0] + xDifference;
+      elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    }
   }
   if(elementDragging != null)
   {
@@ -845,6 +869,7 @@ function imageSelect(e)
       imgMeasure.onload = function()
       {
         var ratio = imgMeasure.width/imgMeasure.height;
+        focusedElement.ratio = ratio;
         if(imgMeasure.width > canvasWidth-toolBarWidth)
         {
           focusedElement.width = canvasWidth-toolBarWidth;
