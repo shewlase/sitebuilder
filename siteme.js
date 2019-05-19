@@ -1,11 +1,15 @@
 
 var canvas = document.getElementById("canvas");
+var toolCanvas = document.getElementById("toolBar");
 var ctx = canvas.getContext("2d");
+var ctxToolbar = toolCanvas.getContext("2d");
 var canvasWidth = window.innerWidth;
 var canvasHeight = window.innerHeight*2;
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 var toolBarWidth = 0.1*canvasWidth;
+toolCanvas.width = canvasWidth;
+toolCanvas.height = canvasHeight;
 var toolBar = [0,0, toolBarWidth, canvasHeight];
 var toolWidth = 0.33*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
@@ -329,6 +333,7 @@ function draw()
 {
 
   ctx.clearRect(0,0,canvasWidth,canvasHeight);
+  ctxToolbar.clearRect(toolBarWidth,0,canvasWidth,canvasHeight);
 
   for(var i=0; i<allElements.length; i++)
   {
@@ -354,7 +359,7 @@ function draw()
   //       ctx.fillRect(heading.x+heading.width, heading.y+heading.height, dragTabSize, dragTabSize);
   //     }
   // }
-  drawToolbar(ctx);//all tools
+  drawToolbar(ctxToolbar);//all tools
 }
 
 function checkClickTab(clickX, clickY)

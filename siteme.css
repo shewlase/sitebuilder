@@ -11,8 +11,16 @@ html,  body
   height: 50vh; */
   /* width: 800px;
   height: 800px; */
-  background-color: #fcffe8;
+  /* background-color: rgba(0,0,255,0.5); */
+  /* left: 10vw; */
+  position: absolute;
   /* should be auto?, easier to update other objects on window resize */
+}
+
+#toolBar
+{
+  position: fixed;
+  /* background-color: #fcffe8; */
 }
 
 #test
@@ -27,14 +35,14 @@ html,  body
 {
   left: 0vw;
   bottom: 2vh;
-  position: absolute;
+  position: fixed;
 }
 
 #fontSizeInput
 {
   left: 0vw;
   bottom: 6vh;
-  position: absolute;
+  position: fixed;
 }
 
 input
@@ -93,7 +101,7 @@ img
 
 #imageSelector
 {
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 200px;
   width: 10vw;
