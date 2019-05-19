@@ -489,6 +489,7 @@ window.onmousedown = function(e)
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = tool;
       nothingClicked = false;
+      selectedElements = [];
       //need unfocusAllElements() function?
       if(focusedElement != null)
       {
@@ -516,8 +517,9 @@ window.onmousedown = function(e)
     var whichTab = tabCheckResult[1]; //index in activeTabs
 
     nothingClicked = !tabClicked;
+
     // var tabs = shapeToCheck.tabList;
-    //if clicked shape/div
+                                    //if clicked shape/div
     if(collides(e.pageX, e.pageY, 5, 5, shapeToCheck.x, shapeToCheck.y, shapeToCheck.width, shapeToCheck.height))
     {
 
@@ -568,8 +570,7 @@ window.onmousedown = function(e)
       elementDragging = shapeToCheck;
       break;
     }
-                                //if clicked resize tab
-
+                                    //if clicked resize tab
     // if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+shapeToCheck.width, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 2*dragTabSize)
     // && shapeToCheck.isFocus)
     else if(tabClicked && whichTab == 0)  //tablist[0] = resizeTab, could be RESIZE_TAB (= 0)
@@ -579,7 +580,7 @@ window.onmousedown = function(e)
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
-    }                                   //movement tab
+  }                                   //movement tab
     // else if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+0.5*shapeToCheck.width-0.5*dragTabSize, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 3*dragTabSize)
     // && shapeToCheck.isFocus)
     else if(tabClicked && whichTab == 1)
@@ -593,11 +594,16 @@ window.onmousedown = function(e)
       shapeToCheck.isFocus = true;
       isMovingShape = true;
       setAllTextFocusable(false);
-      startOfDrag = [shapeToCheck.x, shapeToCheck.y];
+
+      for(var i=0; i<selectedElements.length; i++)
+      {
+        preDragPositions[i] = [selectedElements[i].x, selectedElements[i].y];
+      }
+      // startOfDrag = [shapeToCheck.x, shapeToCheck.y];
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
-    }                              //color tab
+  }                                      //color tab
     else if(tabClicked && whichTab == 2)
     {
       //show color picker
