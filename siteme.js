@@ -32,6 +32,7 @@ const COLOR_TAB = 2;
 
 
 var controlHeld = false;
+var shiftHeld = false;
 var mouseX, mouseY;
 // var divSquare = [20, 20, 10, 10];
 
@@ -63,12 +64,23 @@ class Object
       // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
       ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
     }
+
   }
 
   drawWholeArea(ctx)
   {
     ctx.fillStyle= this.color;
-    ctx.fillRect(this.x, this.y,this.width,this.height);
+    // if(this.id == 'divCircle')
+    if(this.id.toLowerCase().includes('circle'))
+    {
+      ctx.beginPath();
+      ctx.ellipse(this.x+0.5*this.width, this.y+0.5*this.height, 0.5*this.width, 0.5*this.height, 0, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    else
+    {
+      ctx.fillRect(this.x, this.y,this.width,this.height);
+    }
   }
 }
 
@@ -297,7 +309,7 @@ function init()
   divSquare = new Object('divSquare',margin, margin, toolWidth, toolWidth, colors[0]);
   divSquare2 = new Object('divSquare', 2*margin+toolWidth, margin, toolWidth, toolWidth, colors[1]);
   divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, colors[2]);
-  divSquare4 = new Object('divSquare', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 'white');
+  divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 'white');
   toolHeading = new Object('h1', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, colors[0]);
   toolHeading2 = new Object('h2', 2*margin+toolWidth, 3*margin+2*toolWidth, toolWidth, toolWidth, colors[1]);
   toolParagraph = new Object('p', margin, 4*margin+3*toolWidth, toolWidth, toolWidth, colors[2]);
@@ -699,17 +711,20 @@ window.onmousemove = function(e)
   {
     xDifference = e.pageX - mouseStartOfDrag[0];
     yDifference = e.pageY - mouseStartOfDrag[1];
+    elementDragging.width = sizeStartOfDrag[0] + xDifference;
     //if image, keep original ratio (ratio = width/height)
     if(shapeToCheck instanceof BuildImage)
     {
       let ratio = elementDragging.ratio;
-      elementDragging.width = sizeStartOfDrag[0] + xDifference;
       elementDragging.height = elementDragging.width/ratio;
       // elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
+    else if(shapeToCheck.id == 'circle' && shiftHeld)
+    {
+      elementDragging.height = elementDragging.width;
+    }
     else
     {
-      elementDragging.width = sizeStartOfDrag[0] + xDifference;
       elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
 
@@ -738,17 +753,25 @@ window.onmouseup = function(e)
     if(collides(e.pageX, e.pageY, 2, 2, toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight))
     {
       //create new div
-      if(elementDragging.id == 'divSquare')//tool id
+      // if(elementDragging.id == 'divSquare')//tool id
+      if(elementDragging.id.substring(0,3) == 'div')//tool id
       {
         // var droppedShape = new Shape('square', elementDragging.x,   elementDragging.y , elementDragging.width, elementDragging.height, elementDragging.color ,'square');
         //id should be 'square'+allElements.length, editable in text area
-        var droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'square');
+        var droppedShape;
+        if(elementDragging.id == 'divCircle')
+        {
+          droppedShape = new Element('circle', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'circle');
+         //
+        }
+        else
+        {
+          droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'square');
+        }
         allElements.push(droppedShape);
         // droppedShape.isFocus = true;
         focusedElement = droppedShape;
         selectedElements.push(droppedShape);
-        elementDragging.x =  startOfDrag[0];
-        elementDragging.y = startOfDrag[1];
       }
       else if (elementDragging.id.charAt(0) == 'h' && elementDragging.type == null) //type == tool?
       {
@@ -767,8 +790,6 @@ window.onmouseup = function(e)
         // var insertBeforeMe = document.querySelector("#colorInput");
         focusedElement = newHeading;
         selectedElements.push(newHeading);
-        elementDragging.x = startOfDrag[0];
-        elementDragging.y = startOfDrag[1];
       }
       else if (elementDragging.id.charAt(0) == 'p' && elementDragging.type == null)
       {
@@ -779,8 +800,6 @@ window.onmouseup = function(e)
         // var insertBeforeMe = document.querySelector("#colorInput");
         focusedElement = newText;
         selectedElements.push(newText);
-        elementDragging.x = startOfDrag[0];
-        elementDragging.y = startOfDrag[1];
       }
       else if (elementDragging.id == 'img' && elementDragging.type == null)
       {
@@ -789,10 +808,11 @@ window.onmouseup = function(e)
         allElements.push(newImage);
         focusedElement = newImage;
         selectedElements.push(newImage);
-        elementDragging.x = startOfDrag[0];
-        elementDragging.y = startOfDrag[1];
         imageSelector.click();
       }
+
+      elementDragging.x = startOfDrag[0];
+      elementDragging.y = startOfDrag[1];
     }
     else
     {
@@ -810,16 +830,19 @@ window.onmouseup = function(e)
   else if(isResizing)
   {
     isResizing = false;
+    elementDragging.width = sizeStartOfDrag[0] + xDifference;
     if(shapeToCheck instanceof BuildImage)
     {
       let ratio = elementDragging.ratio;
-      elementDragging.width = sizeStartOfDrag[0] + xDifference;
       elementDragging.height = elementDragging.width/ratio;
       // elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
+    else if(shapeToCheck.id == 'circle' && shiftHeld)
+    {
+      elementDragging.height = elementDragging.width;
+    }
     else
     {
-      elementDragging.width = sizeStartOfDrag[0] + xDifference;
       elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
   }
@@ -856,6 +879,9 @@ window.onkeydown = function(e)
     case 17: //control key
       controlHeld = true;
       break;
+    case 16: //shift key
+      shiftHeld = true;
+      break;
     case 68: //D key
       if(!(focusedElement instanceof Text))
       {
@@ -871,6 +897,9 @@ window.onkeyup = function(e)
   switch (e.keyCode) {
     case 17: //control key
       controlHeld = false;
+      break;
+    case 16: //shift key
+      shiftHeld = false;
       break;
   }
 }

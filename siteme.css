@@ -48,6 +48,7 @@ html,  body
 input
 {
   font-family: "Luckiest Guy", cursive;
+  width: 9vw;
   /* padding: 2vw; */
 }
 
