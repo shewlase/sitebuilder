@@ -109,3 +109,11 @@ img
   flex-wrap: wrap;
   flex-direction: column;
 }
+
+#opacitySlider
+{
+  position: fixed;
+  left: 0;
+  bottom: 100px;
+  width: 10vw;
+}

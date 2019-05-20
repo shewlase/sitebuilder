@@ -30,6 +30,8 @@ const RESIZE_TAB = 0;
 const MOVEMENT_TAB = 1;
 const COLOR_TAB = 2;
 
+
+var controlHeld = false;
 var mouseX, mouseY;
 // var divSquare = [20, 20, 10, 10];
 
@@ -43,6 +45,7 @@ class Object
     this.width = width;
     this.height = height;
     this.color = color;
+    this.opacity = 1.0;
   }
 
   draw(ctx)
@@ -117,9 +120,10 @@ class Element extends Object
   {
     var resizeTab = [this.x+this.width, this.y+this.height, dragTabSize, dragTabSize];
     var positionTab = [this.x+0.5*this.width-0.5*dragTabSize, this.y+this.height, dragTabSize, 2*dragTabSize];
-    var colorTab = [this.x+0.75*this.width, this.y+this.height, dragTabSize, dragTabSize];
+    // var colorTab = [this.x+0.75*this.width, this.y+this.height, dragTabSize, dragTabSize];
 
-    this.tabList = [resizeTab, positionTab, colorTab];
+    this.tabList = [resizeTab, positionTab];
+    // this.tabList = [resizeTab, positionTab, colorTab];
   }
 }
 
@@ -310,6 +314,7 @@ function init()
 
   colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeInput");
+  opacitySlider = document.getElementById("opacitySlider");
   animate();
   // draw();
 }
@@ -343,7 +348,9 @@ function draw()
 
   for(var i=0; i<allElements.length; i++)
   {
+    ctx.globalAlpha = allElements[i].opacity;
     allElements[i].draw(ctx);
+    ctx.globalAlpha = 1.0;
   }
   // for(var i=0; i<allElements.length; i++)
   // {
@@ -414,7 +421,8 @@ function checkAutoPosition(element)
   for(var i=0; i<allElements.length; i++)
   {
     var previousEl = allElements[i];
-    if(previousEl != element)
+    if(previousEl != element
+    && !(previousEl instanceof Text || previousEl instanceof BuildImage))
     {
       if(elementCollides(element, previousEl))
       {
@@ -503,6 +511,7 @@ window.onmousedown = function(e)
       elementDragging = tool;
       nothingClicked = false;
       selectedElements = [];
+      opacitySlider.value = 100;
       //need unfocusAllElements() function?
       if(focusedElement != null)
       {
@@ -550,6 +559,7 @@ window.onmousedown = function(e)
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
+      opacitySlider.value = focusedElement.opacity * 100;
 
       if(!controlHeld)
       {
@@ -832,7 +842,6 @@ window.onmouseup = function(e)
   }
 }
 
-var controlHeld = false;
 window.onkeydown = function(e)
 {
   switch (e.keyCode) {
@@ -975,4 +984,13 @@ function setTestLabel(setTo)
 {
   testLabel.innerHTML = setTo;
   // introTitle.innerHTML  = 'Race Mode';
+}
+
+opacitySlider.oninput = function()
+{
+  focusedElement.opacity = this.value*0.01;
+  if(focusedElement instanceof Text)
+  {
+    focusedElement.htmlElement.style.opacity = focusedElement.opacity;
+  }
 }
