@@ -883,12 +883,28 @@ window.onkeydown = function(e)
       shiftHeld = true;
       break;
     case 68: //D key
+      //so doesnt trigger while typing in text area
       if(!(focusedElement instanceof Text))
       {
         placeDiv(mouseX, mouseY);
       }
       break;
+    case 84: //T key
+    if(!(focusedElement instanceof Text))
+    {
+      var id = "heading" +(allElements.length);
+      elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, colors[0]);
+      var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
+        newHeading.height = toolWidth*1.3;
+        newHeading.updateHtmlElement();//position, size, color
 
+      // allHeadings.push(newHeading);
+      allElements.push(newHeading);
+      // var insertBeforeMe = document.querySelector("#colorInput");
+      focusedElement = newHeading;
+      selectedElements.push(newHeading);
+      break;
+    }
   }
 }
 
@@ -940,7 +956,8 @@ fontSizeInput.onkeydown = function(event)
 
 function placeDiv(x, y)
 {
-  var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
+  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, colors[0],'square');
+  // var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
   allElements.push(droppedShape);
   // droppedShape.isFocus = true;
   focusedElement = droppedShape;
