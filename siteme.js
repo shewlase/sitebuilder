@@ -34,6 +34,7 @@ const COLOR_TAB = 2;
 var controlHeld = false;
 var shiftHeld = false;
 var mouseX, mouseY;
+var clipboardItem;
 // var divSquare = [20, 20, 10, 10];
 
 class Object
@@ -855,6 +856,10 @@ window.onmouseup = function(e)
     elementDragging.updateHtmlElement();
     elementDragging.htmlElement.focus();
   }
+  else if(elementDragging.id == 'circle')
+  {
+    //dont auto center
+  }
   else //only auto pos and center divs
   {
     if(elementDragging != null)
@@ -881,6 +886,9 @@ window.onkeydown = function(e)
       break;
     case 16: //shift key
       shiftHeld = true;
+      break;
+    case 67: //C key
+      copyFocusedElements();
       break;
     case 68: //D key
       //so doesnt trigger while typing in text area
@@ -965,6 +973,25 @@ function placeDiv(x, y)
   selectedElements.push(droppedShape);
 }
 
+function copyFocusedElements()
+{
+  if(controlHeld && focusedElement != null)
+  {
+    //need checks for each element type, text, image, div
+      //if text, change .text/.value to match,
+
+    //need check for multiple copy i.e. if selectedElements.length > 1
+    clipboardItem =  new Element(focusedElement.id, focusedElement.x,   focusedElement.y , focusedElement.width, focusedElement.height, focusedElement.color ,'circle');
+    clipboardItem.x += 0.03*canvasWidth;
+    clipboardItem.y += 0.03*canvasWidth;
+    focusedElement.isFocus = false;
+    focusedElement = clipboardItem;
+    selectedElements = [];
+    selectedElements[0] = focusedElement;
+    clipboardItem.isFocus = true;
+    allElements.push(clipboardItem);
+  }
+}
 
 var imageSelector = document.getElementById('imageSelector');
 imageSelector.addEventListener('change', imageSelect, false);
