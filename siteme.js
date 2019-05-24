@@ -53,7 +53,6 @@ class Object
   draw(ctx)
   {
     this.drawWholeArea(ctx);
-    // if(this.id == 'h1')//should jus tbe first letter H or p
     //for tools
 
     if(this.id.charAt(0) == 'h' || this.id.charAt(0) == 'p')//should jus tbe first letter H or p
@@ -65,7 +64,6 @@ class Object
       // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
       ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
     }
-
   }
 
   drawWholeArea(ctx)
@@ -211,7 +209,6 @@ class Text extends Element
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
       ctx.font = fontSize+' Luckiest Guy';
       var wordWidth = 100+ctx.measureText(thisInput.value).width;
-      var thisInput = event.target;
       var idToCheck = thisInput.id;
       if(idToCheck.charAt(0) == 'h')
       {
@@ -328,7 +325,8 @@ function init()
   colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeInput");
   opacitySlider = document.getElementById("opacitySlider");
-  animate();
+  // animate();
+  setTimeout(draw, 5);
   // draw();
 }
 
@@ -672,6 +670,7 @@ window.onmousemove = function(e)
   // xDifference = e.pageX - mouseStartOfDrag[0];
   // yDifference = e.pageY - mouseStartOfDrag[1];
 
+
   //need to separate placing new shape and moving placed shape
   mouseX = e.pageX;
   mouseY = e.pageY;
@@ -739,6 +738,7 @@ window.onmousemove = function(e)
       shapeToCheck.updateHtmlElement();
     }
   }
+  draw();
 }
 
 
@@ -868,10 +868,24 @@ window.onmouseup = function(e)
       checkAutoCenter(elementDragging);
     }
   }
+  draw();
 }
+
+//prevents default page scrolling hotkeys
+// toolCanvas.addEventListener("keydown", function(e) {
+//     // space and arrow keys
+//     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+//         e.preventDefault();
+//     }
+// }, false);
 
 window.onkeydown = function(e)
 {
+  if([37, 38, 39, 40].indexOf(e.keyCode) > -1)
+  {
+      e.preventDefault();
+  }
+
   switch (e.keyCode) {
     case 46: //delete
       if(focusedElement instanceof Element
@@ -898,22 +912,60 @@ window.onkeydown = function(e)
       }
       break;
     case 84: //T key
-    if(!(focusedElement instanceof Text))
-    {
-      var id = "heading" +(allElements.length);
-      elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, colors[0]);
-      var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
+      if(!(focusedElement instanceof Text))
+      {
+        var id = "heading" +(allElements.length);
+        elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, colors[0]);
+        var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
         newHeading.height = toolWidth*1.3;
-        newHeading.updateHtmlElement();//position, size, color
+        // allHeadings.push(newHeading);
+        // var insertBeforeMe = document.querySelector("#colorInput");
 
-      // allHeadings.push(newHeading);
-      allElements.push(newHeading);
-      // var insertBeforeMe = document.querySelector("#colorInput");
-      focusedElement = newHeading;
-      selectedElements.push(newHeading);
-      break;
-    }
+        //delay to remove 'T' from hotkey press
+        setTimeout(function()
+        {
+          focusedElement = newHeading;
+          selectedElements = [];
+          newHeading.htmlElement.value = '';
+          selectedElements.push(newHeading);
+          allElements.push(newHeading);
+          newHeading.updateHtmlElement();//position, size, color
+        }, 2);
+      }
+        break;
+
+      //LURD = 0123
+      case 37:
+        nudgeElements(0);
+        break;
+      case 38:
+        nudgeElements(1);
+        break;
+      case 39:
+        nudgeElements(2);
+        break;
+      case 40:
+        nudgeElements(3);
+        break;
+
+      //color hotkeys
+      case 49:
+        setColor(colors[0]);
+        break;
+      case 50:
+        setColor(colors[1]);
+        break;
+      case 51:
+        setColor(colors[2]);
+        break;
+      case 52:
+        setColor('white');
+        break;
+      case 53:
+        setColor('black');
+        break;
   }
+  draw();
 }
 
 window.onkeyup = function(e)
@@ -926,6 +978,45 @@ window.onkeyup = function(e)
       shiftHeld = false;
       break;
   }
+  draw();
+}
+
+
+function setColor(color)
+{
+  if(focusedElement instanceof Text)
+  {
+    focusedElement.fontColor = color;
+    focusedElement.updateHtmlElement();
+  }
+  else
+  {
+    focusedElement.color = color;
+  }
+}
+//for movement with arrow keys
+    //left up right down = 0 1 2 3
+function nudgeElements(direction)
+{
+  let amount = 0.005*canvasWidth;
+  if(direction == 0 || direction == 1)
+  {
+    amount *= -1;
+  }
+  //left right
+  if(direction == 0 || direction == 2)
+  {
+    focusedElement.x += amount;
+  }
+  else //up down
+  {
+    focusedElement.y += amount;
+  }
+
+  if(focusedElement instanceof Text)
+  {
+    focusedElement.updateHtmlElement();
+  }
 }
 
 colorInput.addEventListener("keydown", function(event)
@@ -934,15 +1025,16 @@ colorInput.addEventListener("keydown", function(event)
   {
     shapeColor = colorInput.value;
     // divSquare.color = shapeColor;
-    if(focusedElement instanceof Text)
-    {
-      focusedElement.fontColor = shapeColor;
-      focusedElement.updateHtmlElement();
-    }
-    else
-    {
-      focusedElement.color = shapeColor;
-    }
+    setColor(shapeColor);
+    // if(focusedElement instanceof Text)
+    // {
+    //   focusedElement.fontColor = shapeColor;
+    //   focusedElement.updateHtmlElement();
+    // }
+    // else
+    // {
+    //   focusedElement.color = shapeColor;
+    // }
 
   }
 });
@@ -984,6 +1076,7 @@ function copyFocusedElements()
     clipboardItem =  new Element(focusedElement.id, focusedElement.x,   focusedElement.y , focusedElement.width, focusedElement.height, focusedElement.color ,'circle');
     clipboardItem.x += 0.03*canvasWidth;
     clipboardItem.y += 0.03*canvasWidth;
+    clipboardItem.opacity = focusedElement.opacity;
     focusedElement.isFocus = false;
     focusedElement = clipboardItem;
     selectedElements = [];
@@ -1012,14 +1105,14 @@ function imageSelect(e)
       {
         var ratio = imgMeasure.width/imgMeasure.height;
         focusedElement.ratio = ratio;
-        if(imgMeasure.width > canvasWidth-toolBarWidth)
+        if(imgMeasure.width > 0.8*(canvasWidth-toolBarWidth))
         {
           focusedElement.width = canvasWidth-toolBarWidth;
           focusedElement.height = focusedElement.width/ratio;
         }
-        else if(imgMeasure.height > canvasHeight)
+        else if(imgMeasure.height > 0.5*canvasHeight)
         {
-          focusedElement.height = 0.8*canvasHeight;
+          focusedElement.height = 0.4*canvasHeight;
           focusedElement.width = focusedElement.height*ratio;
         }
         else
