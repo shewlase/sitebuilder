@@ -10,7 +10,7 @@ canvas.height = canvasHeight;
 var toolBarWidth = 0.1*canvasWidth;
 toolCanvas.width = canvasWidth;
 toolCanvas.height = canvasHeight;
-var toolBar = [0,0, toolBarWidth, canvasHeight];
+var toolBar = [0,0, toolBarWidth, canvasHeight/2];
 var toolWidth = 0.33*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
 var workSpaceCenterX = workSpace[0]+0.5*workSpace[2];
@@ -39,15 +39,21 @@ var clipboardItem;
 
 class Object
 {
-  constructor(id, x, y, width, height, color)
+  constructor(id, x, y, width, height, colorIndex)
   {
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.color = color;
+    this.colorIndex = colorIndex;
+    this.color = colors[colorIndex];
     this.opacity = 1.0;
+  }
+
+  refreshColor()
+  {
+    this.color = colors[this.colorIndex];
   }
 
   draw(ctx)
@@ -85,9 +91,9 @@ class Object
 
 class Element extends Object
 {
-  constructor(id, x, y, width, height, color, type)
+  constructor(id, x, y, width, height, colorIndex, type)
   {
-    super(id, x, y, width, height, color);
+    super(id, x, y, width, height, colorIndex);
     this.type = type;
     this.isFocus = true;
     this.tabList = [];
@@ -255,9 +261,9 @@ class Text extends Element
 
 class BuildImage extends Element
 {
-  constructor(id, x, y, width, height, color, type)
+  constructor(id, x, y, width, height, colorIndex, type)
   {
-    super(id, x, y, width, height, color, type);
+    super(id, x, y, width, height, colorIndex, type);
     // this.source = 'grenade.jpg';
     var newHtmlImage = document.createElement('img');
     this.htmlElement = newHtmlImage;
@@ -287,7 +293,7 @@ class BuildImage extends Element
   }
 }
 
-var colors;
+var colors, margin;
 init();
 
 function init()
@@ -296,22 +302,22 @@ function init()
   allText = [];
   allTools = [];
   selectedElements = [];
-  var margin = toolWidth/3;
+  margin = toolWidth/3;
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
   //blue, yellow orange
-  colors = ['#2176AE','#FBB13C', '#FE6847'];
+  colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
-  divSquare = new Object('divSquare',margin, margin, toolWidth, toolWidth, colors[0]);
-  divSquare2 = new Object('divSquare', 2*margin+toolWidth, margin, toolWidth, toolWidth, colors[1]);
-  divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, colors[2]);
-  divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 'white');
-  toolHeading = new Object('h1', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, colors[0]);
-  toolHeading2 = new Object('h2', 2*margin+toolWidth, 3*margin+2*toolWidth, toolWidth, toolWidth, colors[1]);
-  toolParagraph = new Object('p', margin, 4*margin+3*toolWidth, toolWidth, toolWidth, colors[2]);
-  toolImage = new Object('img', margin, 5*margin+4*toolWidth, toolWidth, toolWidth, colors[0]);
+  divSquare = new Object('divSquare',margin, margin, toolWidth, toolWidth, 0);
+  divSquare2 = new Object('divSquare', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
+  divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
+  divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
+  toolHeading = new Object('h1', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
+  toolHeading2 = new Object('h2', 2*margin+toolWidth, 3*margin+2*toolWidth, toolWidth, toolWidth, 0);
+  toolParagraph = new Object('p', margin, 4*margin+3*toolWidth, toolWidth, toolWidth, 1);
+  toolImage = new Object('img', margin, 5*margin+4*toolWidth, toolWidth, toolWidth, 2);
 
   allTools.push(divSquare);
   allTools.push(divSquare2);
@@ -326,7 +332,7 @@ function init()
   fontSizeInput = document.getElementById("fontSizeInput");
   opacitySlider = document.getElementById("opacitySlider");
   // animate();
-  setTimeout(draw, 5);
+  setTimeout(draw, 10);
   // draw();
 }
 
@@ -345,11 +351,11 @@ function drawToolbar(ctx)
 }
 
 //dont need this? just draw when changed or have shouldAnimate variable
-function animate()
-{
-	requestAnimationFrame(animate);
-  draw();
-}
+// function animate()
+// {
+// 	requestAnimationFrame(animate);
+//   draw();
+// }
 
 function draw()
 {
@@ -384,6 +390,7 @@ function draw()
   //     }
   // }
   drawToolbar(ctxToolbar);//all tools
+  drawPalette();
 }
 
 function checkClickTab(clickX, clickY)
@@ -450,7 +457,7 @@ function checkAutoPosition(element)
 
         if(element.y < previousEl.y+previousEl.height && element.y > previousEl.y+previousEl.height-autoPosBuffer)
         {
-          element.y = previousEl.y+previousEl.height;
+          element.y = previousEl.y+previousEl.height-2;
           repositioned = true;
         }
       }
@@ -762,12 +769,12 @@ window.onmouseup = function(e)
         var droppedShape;
         if(elementDragging.id == 'divCircle')
         {
-          droppedShape = new Element('circle', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'circle');
+          droppedShape = new Element('circle', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.colorIndex ,'circle');
          //
         }
         else
         {
-          droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.color ,'square');
+          droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.colorIndex ,'square');
         }
         allElements.push(droppedShape);
         // droppedShape.isFocus = true;
@@ -780,7 +787,7 @@ window.onmouseup = function(e)
         //should take font size for height and width
         // var newHeading = [elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth];
         var id = "heading" +(allElements.length);
-        var newHeading = new Text(id, elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth, 'black', 'heading');
+        var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*4,  toolWidth, 'black', 'heading');
         if(elementDragging.id.charAt(1) == '1')
         {
           newHeading.height = toolWidth*1.3;
@@ -915,7 +922,8 @@ window.onkeydown = function(e)
       if(!(focusedElement instanceof Text))
       {
         var id = "heading" +(allElements.length);
-        elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, colors[0]);
+        //dummy object, bad hack
+        elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, 0);
         var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
         newHeading.height = toolWidth*1.3;
         // allHeadings.push(newHeading);
@@ -948,21 +956,26 @@ window.onkeydown = function(e)
         nudgeElements(3);
         break;
 
-      //color hotkeys
+      //color hotkeys 1-5
       case 49:
-        setColor(colors[0]);
+        setColor(0);
         break;
       case 50:
-        setColor(colors[1]);
+        setColor(1);
         break;
       case 51:
-        setColor(colors[2]);
+        setColor(2);
         break;
       case 52:
-        setColor('white');
+        setColor(3);
+        // setColor('white');
         break;
       case 53:
-        setColor('black');
+        setColor(4);
+        // setColor('black');
+        break;
+      case 54:
+        getNewColorTheme();
         break;
   }
   draw();
@@ -982,16 +995,18 @@ window.onkeyup = function(e)
 }
 
 
-function setColor(color)
+function setColor(colorIndex)
 {
   if(focusedElement instanceof Text)
   {
-    focusedElement.fontColor = color;
+    focusedElement.colorIndex = colorIndex;
+    focusedElement.fontColor = colors[colorIndex];
     focusedElement.updateHtmlElement();
   }
   else
   {
-    focusedElement.color = color;
+    focusedElement.colorIndex = colorIndex;
+    focusedElement.refreshColor();
   }
 }
 //for movement with arrow keys
@@ -1025,7 +1040,8 @@ colorInput.addEventListener("keydown", function(event)
   {
     shapeColor = colorInput.value;
     // divSquare.color = shapeColor;
-    setColor(shapeColor);
+    // setColor(shapeColor);
+    focusedElement.color = shapeColor;
     // if(focusedElement instanceof Text)
     // {
     //   focusedElement.fontColor = shapeColor;
@@ -1056,7 +1072,7 @@ fontSizeInput.onkeydown = function(event)
 
 function placeDiv(x, y)
 {
-  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, colors[0],'square');
+  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, 0,'square');
   // var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
   allElements.push(droppedShape);
   // droppedShape.isFocus = true;
@@ -1073,7 +1089,7 @@ function copyFocusedElements()
       //if text, change .text/.value to match,
 
     //need check for multiple copy i.e. if selectedElements.length > 1
-    clipboardItem =  new Element(focusedElement.id, focusedElement.x,   focusedElement.y , focusedElement.width, focusedElement.height, focusedElement.color ,'circle');
+    clipboardItem =  new Element(focusedElement.id, focusedElement.x,   focusedElement.y , focusedElement.width, focusedElement.height, focusedElement.colorIndex ,'circle');
     clipboardItem.x += 0.03*canvasWidth;
     clipboardItem.y += 0.03*canvasWidth;
     clipboardItem.opacity = focusedElement.opacity;
@@ -1158,5 +1174,74 @@ opacitySlider.oninput = function()
   if(focusedElement instanceof Text)
   {
     focusedElement.htmlElement.style.opacity = focusedElement.opacity;
+  }
+}
+
+
+//_________________________________COLOR API_________________________________
+
+function getNewColorTheme()
+{
+  var url = "http://colormind.io/api/";
+  var data = {
+  	model : "default"//,
+  //	input : [[44,43,44],[90,83,82],"N","N","N"]
+  }
+
+  var http = new XMLHttpRequest();
+
+  http.onreadystatechange = function() {
+  	if(http.readyState == 4 && http.status == 200) {
+  		var palette = JSON.parse(http.responseText).result;
+      newColorTheme(palette);
+  	}
+  }
+
+  http.open("POST", url, true);
+  http.send(JSON.stringify(data));
+
+  // [[42, 41, 48], [90, 83, 84], [191, 157, 175], [188, 138, 125], [215, 170, 66]]
+  // note that the input colors have changed as well, by a small amount
+}
+
+function newColorTheme(palette)
+{
+  let colorJson = palette;
+  colors[0] = 'rgb('+palette[0][0]+', '+palette[0][1]+', '+palette[0][2]+')';
+  colors[1] = 'rgb('+palette[1][0]+', '+palette[1][1]+', '+palette[1][2]+')';
+  colors[2] = 'rgb('+palette[2][0]+', '+palette[2][1]+', '+palette[2][2]+')';
+  colors[3] = 'rgb('+palette[3][0]+', '+palette[3][1]+', '+palette[3][2]+')';
+  colors[4] = 'rgb('+palette[4][0]+', '+palette[4][1]+', '+palette[4][2]+')';
+  updateColors();
+
+}
+//change all elements and div tools to match new scheme
+function updateColors()
+{
+  let colorIndex = 0;
+  for(var i = 0; i < allTools.length; i++)
+  {
+    allTools[i].color = colors[colorIndex];
+    colorIndex++;
+    if(colorIndex > colors.length-1)
+    {
+      colorIndex = 0;
+    }
+  }
+  for(var i=0; i<allElements.length; i++)
+  {
+    allElements[i].refreshColor();
+  }
+  draw();
+}
+
+
+function drawPalette()
+{
+  let colorWidth = (toolBarWidth-2*margin)/5;
+  for(let i = 0; i < colors.length; i++)
+  {
+    ctxToolbar.fillStyle = colors[i];
+    ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
   }
 }
