@@ -213,7 +213,7 @@ class Text extends Element
     {
       var thisInput = event.target;
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
-      ctx.font = fontSize+' Luckiest Guy';
+      ctx.font = fontSize+' Luckiest Guy'; //just for measurement
       var wordWidth = 100+ctx.measureText(thisInput.value).width;
       var idToCheck = thisInput.id;
       if(idToCheck.charAt(0) == 'h')
@@ -311,20 +311,21 @@ function init()
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
   divSquare = new Object('divSquare',margin, margin, toolWidth, toolWidth, 0);
-  divSquare2 = new Object('divSquare', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
-  divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
-  divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolHeading = new Object('h1', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
-  toolHeading2 = new Object('h2', 2*margin+toolWidth, 3*margin+2*toolWidth, toolWidth, toolWidth, 0);
-  toolParagraph = new Object('p', margin, 4*margin+3*toolWidth, toolWidth, toolWidth, 1);
-  toolImage = new Object('img', margin, 5*margin+4*toolWidth, toolWidth, toolWidth, 2);
+  divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
+  // divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
+  // divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
+  toolHeading = new Object('h1', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
+  // toolHeading2 = new Object('h2', 2*margin+toolWidth, 2*margin+2*toolWidth, toolWidth, toolWidth, 0);
+  toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
+  toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
+  // ctx.font = toolBarWidth/4+'px Luckiest Guy';
 
   allTools.push(divSquare);
   allTools.push(divSquare2);
-  allTools.push(divSquare3);
-  allTools.push(divSquare4);
+  // allTools.push(divSquare3);
+  // allTools.push(divSquare4);
   allTools.push(toolHeading);
-  allTools.push(toolHeading2);
+  // allTools.push(toolHeading2);
   allTools.push(toolParagraph);
   allTools.push(toolImage);
 
@@ -332,19 +333,21 @@ function init()
   fontSizeInput = document.getElementById("fontSizeInput");
   opacitySlider = document.getElementById("opacitySlider");
   // animate();
-  setTimeout(draw, 10);
+
+  //need delay to wait for google font to load
+  setTimeout(draw, 500);
   // draw();
 }
 
-function drawToolbar(ctx)
+function drawToolbar(ctxToolbar)
 {
-  ctx.fillStyle='lightgray';
+  ctxToolbar.fillStyle='lightgray';
   // ctx.fillStyle='#F6FEAA';
   // ctx.fillRect(0,0,toolBarWidth,canvasHeight);
-  ctx.fillRect(toolBar[0], toolBar[1], toolBar[2], toolBar[3]);
+  ctxToolbar.fillRect(toolBar[0], toolBar[1], toolBar[2], toolBar[3]);
   for(var i = 0; i < allTools.length; i++)
   {
-    allTools[i].draw(ctx);
+    allTools[i].draw(ctxToolbar);
   }
   // divSquare.draw(ctx);
   // ctx.fillRect(20, 20, 150, 100);
@@ -693,6 +696,8 @@ window.onmousemove = function(e)
     {
       elementDragging.updateHtmlElement();
     }
+
+    draw();
   }
   else if(isMovingShape)
   {
@@ -713,6 +718,8 @@ window.onmousemove = function(e)
         elementToMove.updateHtmlElement();
       }
     }
+
+    draw();
   }
   else if(isResizing)
   {
@@ -744,8 +751,9 @@ window.onmousemove = function(e)
     {
       shapeToCheck.updateHtmlElement();
     }
+
+    draw();
   }
-  draw();
 }
 
 
@@ -977,8 +985,32 @@ window.onkeydown = function(e)
       case 54:
         getNewColorTheme();
         break;
+      case 189: //minus
+      if(focusedElement != null)
+      {
+        sendToBack(focusedElement);
+      }
+      break;
+      case 187: //plus
+      if(focusedElement != null)
+      {
+        bringToFront(focusedElement);
+      }
+      break;
   }
   draw();
+}
+
+function sendToBack(element)
+{
+  allElements.unshift(element);
+  allElements.splice(allElements.lastIndexOf(element), 1);
+}
+
+function bringToFront(element)
+{
+  allElements.push(element);
+  allElements.splice(allElements.indexOf(element), 1);
 }
 
 window.onkeyup = function(e)
@@ -1143,6 +1175,7 @@ function imageSelect(e)
 
       focusedElement.src = fr.result;
       focusedElement.canvasImage.src = fr.result;
+      setTimeout(draw, 1000);
   };
   fr.readAsDataURL(this.files[0]);
 
@@ -1175,6 +1208,7 @@ opacitySlider.oninput = function()
   {
     focusedElement.htmlElement.style.opacity = focusedElement.opacity;
   }
+  draw();
 }
 
 
