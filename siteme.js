@@ -11,6 +11,7 @@ var toolBarWidth = 0.1*canvasWidth;
 toolCanvas.width = canvasWidth;
 toolCanvas.height = canvasHeight;
 var toolBar = [0,0, toolBarWidth, canvasHeight/2];
+var editBar = [canvasWidth-1.2*toolBarWidth, 0, 1.2*toolBarWidth, canvasHeight/2];
 var toolWidth = 0.33*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
 var workSpaceCenterX = workSpace[0]+0.5*workSpace[2];
@@ -153,7 +154,7 @@ class Text extends Element
     //create new input at newHeadingx y
 
     //elementDragging is the tool dragged
-    if(elementDragging.id == 'h1')
+    if(elementDragging.id == 'h')
     {
       activeInput = document.createElement('input');
       activeInput.classList.add("headingInput");
@@ -314,7 +315,7 @@ function init()
   divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
   // divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolHeading = new Object('h1', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
+  toolHeading = new Object('h', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // toolHeading2 = new Object('h2', 2*margin+toolWidth, 2*margin+2*toolWidth, toolWidth, toolWidth, 0);
   toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
   toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
@@ -351,6 +352,14 @@ function drawToolbar(ctxToolbar)
   }
   // divSquare.draw(ctx);
   // ctx.fillRect(20, 20, 150, 100);
+}
+
+function drawEditBar(ctxEditbar)
+{
+	ctxToolbar.fillStyle='lightgray';
+  // ctx.fillStyle='#F6FEAA';
+  // ctx.fillRect(0,0,toolBarWidth,canvasHeight);
+  ctxToolbar.fillRect(editBar[0], editBar[1], editBar[2], editBar[3]);
 }
 
 //dont need this? just draw when changed or have shouldAnimate variable
@@ -393,6 +402,7 @@ function draw()
   //     }
   // }
   drawToolbar(ctxToolbar);//all tools
+  drawEditBar(ctxToolbar);
   drawPalette();
 }
 
@@ -580,8 +590,14 @@ window.onmousedown = function(e)
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
-      opacitySlider.value = focusedElement.opacity * 100;
+      
+	  //display all edit inputs, and update their values
+	  colorInput.style.opacity = 1.0;
+	  opacitySlider.style.opacity = 1.0;
+	  opacitySlider.value = focusedElement.opacity * 100;
 
+	  
+	  
       if(!controlHeld)
       {
       // selectedElements = [];
@@ -601,8 +617,12 @@ window.onmousedown = function(e)
 
       if(!(focusedElement instanceof Text))
       {
-        isMovingShape = true;
+        isMovingShape = true;		
       }
+	  else
+	  {		  
+		fontSizeInput.style.opacity = 1.0;
+	  }
       setAllTextFocusable(false);
       //needs to be for every shape
       for(var i=0; i<selectedElements.length; i++)
@@ -657,7 +677,8 @@ window.onmousedown = function(e)
 
   }
   //if click within the toolbar
-  if(collides(e.pageX, e.pageY, 5, 5, 0, 0, toolBarWidth, canvasHeight))
+  if(collides(e.pageX, e.pageY, 5, 5, 0, 0, toolBarWidth, canvasHeight)
+	  || collides(e.pageX, e.pageY, 5, 5, editBar[0], editBar[1], toolBarWidth, canvasHeight))
   {
     nothingClicked = false;
   }
@@ -671,8 +692,12 @@ window.onmousedown = function(e)
       // elementDragging.isFocus = false;
     }
     focusedElement = null;
+	opacitySlider.style.opacity = 0.0;
+	colorInput.style.opacity = 0.0;
+	fontSizeInput.style.opacity = 0.0;
   }
   // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
+  draw();
 }
 
 window.onmousemove = function(e)
@@ -931,7 +956,7 @@ window.onkeydown = function(e)
       {
         var id = "heading" +(allElements.length);
         //dummy object, bad hack
-        elementDragging = new Object('h1', 0, 0, toolWidth, toolWidth, 0);
+        elementDragging = new Object('h', 0, 0, toolWidth, toolWidth, 0);
         var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
         newHeading.height = toolWidth*1.3;
         // allHeadings.push(newHeading);
@@ -1276,6 +1301,7 @@ function drawPalette()
   for(let i = 0; i < colors.length; i++)
   {
     ctxToolbar.fillStyle = colors[i];
-    ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
+    // ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
+    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
   }
 }

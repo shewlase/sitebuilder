@@ -33,16 +33,18 @@ html,  body
 
 #colorInput
 {
-  left: 0vw;
+  right: 0;
   bottom: 2vh;
   position: fixed;
+  opacity: 0.0;  
 }
 
 #fontSizeInput
 {
-  left: 0vw;
+  right: 0;
   bottom: 6vh;
-  position: fixed;
+  position: fixed;  
+  opacity: 0.0;
 }
 
 input
@@ -103,18 +105,20 @@ img
 #imageSelector
 {
   position: fixed;
-  left: 0;
+  right: 0;
   bottom: 200px;
   width: 10vw;
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
+  flex-direction: column;  
+  opacity: 0.0;
 }
 
 #opacitySlider
 {
   position: fixed;
-  left: 0;
+  right: 0;
   bottom: 100px;
   width: 10vw;
+  opacity: 0.0;
 }
