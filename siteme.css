@@ -36,14 +36,14 @@ html,  body
   right: 0;
   bottom: 2vh;
   position: fixed;
-  opacity: 0.0;  
+  opacity: 0.0;
 }
 
 #fontSizeInput
 {
-  right: 0;
-  bottom: 6vh;
-  position: fixed;  
+  right: 0.75vw;
+  bottom: 50vh;
+  position: fixed;
   opacity: 0.0;
 }
 
@@ -110,7 +110,7 @@ img
   width: 10vw;
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;  
+  flex-direction: column;
   opacity: 0.0;
 }
 
@@ -118,7 +118,7 @@ img
 {
   position: fixed;
   right: 0;
-  bottom: 100px;
+  bottom: 30vh;
   width: 10vw;
   opacity: 0.0;
 }

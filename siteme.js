@@ -1,4 +1,6 @@
 
+
+//variables for canvases and their dimensions
 var canvas = document.getElementById("canvas");
 var toolCanvas = document.getElementById("toolBar");
 var ctx = canvas.getContext("2d");
@@ -7,15 +9,19 @@ var canvasWidth = window.innerWidth;
 var canvasHeight = window.innerHeight*2;
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
+
+//variables for toolbars and workspace
 var toolBarWidth = 0.1*canvasWidth;
 toolCanvas.width = canvasWidth;
 toolCanvas.height = canvasHeight;
 var toolBar = [0,0, toolBarWidth, canvasHeight/2];
 var editBar = [canvasWidth-1.2*toolBarWidth, 0, 1.2*toolBarWidth, canvasHeight/2];
-var toolWidth = 0.33*toolBarWidth;
+// var toolWidth = 0.33*toolBarWidth;
+var toolWidth = 0.6*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
-var workSpaceCenterX = workSpace[0]+0.5*workSpace[2];
-var dragTabSize = 0.5*toolWidth;
+// var workSpaceCenterX = workSpace[0]+0.5*workSpace[2];
+var workSpaceCenterX = 0.49*canvasWidth;
+var dragTabSize = 0.2*toolWidth;
 var dragTabColor = 'gray';
 // var toolBar = [0,0, 100, 100];
 var divSquare, divSquare2, divSquare3;
@@ -36,8 +42,9 @@ var controlHeld = false;
 var shiftHeld = false;
 var mouseX, mouseY;
 var clipboardItem;
-// var divSquare = [20, 20, 10, 10];
 
+
+//Class definitions
 class Object
 {
   constructor(id, x, y, width, height, colorIndex)
@@ -90,6 +97,7 @@ class Object
   }
 }
 
+//All objects that will become HTML elements
 class Element extends Object
 {
   constructor(id, x, y, width, height, colorIndex, type)
@@ -144,6 +152,7 @@ class Element extends Object
     // this.tabList = [resizeTab, positionTab, colorTab];
   }
 }
+
 
 class Text extends Element
 {
@@ -295,6 +304,7 @@ class BuildImage extends Element
 }
 
 var colors, margin;
+
 init();
 
 function init()
@@ -308,26 +318,29 @@ function init()
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
   //blue, yellow orange
-  colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
+  colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+  // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
-  divSquare = new Object('divSquare',margin, margin, toolWidth, toolWidth, 0);
-  divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
+  divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 0);
+  // divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
   // divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolHeading = new Object('h', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
+  toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1);
+  // toolHeading = new Object('h', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // toolHeading2 = new Object('h2', 2*margin+toolWidth, 2*margin+2*toolWidth, toolWidth, toolWidth, 0);
-  toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
+  // toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
+  toolImage = new Object('img', margin, 0.3*canvasHeight, toolWidth, toolWidth, 2);
+  // toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
   // ctx.font = toolBarWidth/4+'px Luckiest Guy';
 
   allTools.push(divSquare);
-  allTools.push(divSquare2);
+  // allTools.push(divSquare2);
   // allTools.push(divSquare3);
   // allTools.push(divSquare4);
   allTools.push(toolHeading);
   // allTools.push(toolHeading2);
-  allTools.push(toolParagraph);
+  // allTools.push(toolParagraph);
   allTools.push(toolImage);
 
   colorInput = document.getElementById("colorInput");
@@ -487,8 +500,10 @@ function checkAutoCenter(element)
 {
   var elementCenterX = elementDragging.x+0.5*elementDragging.width;
   if(elementCenterX > workSpaceCenterX-autoPosBuffer && elementCenterX < workSpaceCenterX+autoPosBuffer)
+  // if(elementCenterX > 0.49*canvasWidth-autoPosBuffer && elementCenterX < 0.49*canvasWidth+autoPosBuffer)
   {
     elementDragging.x = workSpaceCenterX - 0.5*elementDragging.width;
+    // elementDragging.x = 0.49*canvasWidth - 0.5*elementDragging.width;
   }
 }
 
@@ -590,14 +605,14 @@ window.onmousedown = function(e)
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
-      
+
 	  //display all edit inputs, and update their values
 	  colorInput.style.opacity = 1.0;
 	  opacitySlider.style.opacity = 1.0;
 	  opacitySlider.value = focusedElement.opacity * 100;
 
-	  
-	  
+
+
       if(!controlHeld)
       {
       // selectedElements = [];
@@ -617,10 +632,10 @@ window.onmousedown = function(e)
 
       if(!(focusedElement instanceof Text))
       {
-        isMovingShape = true;		
+        isMovingShape = true;
       }
 	  else
-	  {		  
+	  {
 		fontSizeInput.style.opacity = 1.0;
 	  }
       setAllTextFocusable(false);
@@ -1302,6 +1317,6 @@ function drawPalette()
   {
     ctxToolbar.fillStyle = colors[i];
     // ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
-    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
+    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+margin+i*colorWidth, canvasHeight/2.5, colorWidth, 0.6*toolWidth);
   }
 }
