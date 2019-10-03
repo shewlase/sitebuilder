@@ -43,6 +43,8 @@ var shiftHeld = false;
 var mouseX, mouseY;
 var clipboardItem;
 
+var opacitySliderVisible = false;
+var textSliderVisible = false;
 
 //Class definitions
 class Object
@@ -77,6 +79,11 @@ class Object
       ctx.fillStyle='black';
       // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
       ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
+    }
+    //check if image assigned
+    if()
+    {
+      
     }
   }
 
@@ -346,6 +353,8 @@ function init()
   colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
+
+  initImages();
   // animate();
 
   //need delay to wait for google font to load
@@ -369,10 +378,40 @@ function drawToolbar(ctxToolbar)
 
 function drawEditBar(ctxEditbar)
 {
-	ctxToolbar.fillStyle='lightgray';
-  // ctx.fillStyle='#F6FEAA';
-  // ctx.fillRect(0,0,toolBarWidth,canvasHeight);
-  ctxToolbar.fillRect(editBar[0], editBar[1], editBar[2], editBar[3]);
+  //draw gray background
+  ctxEditbar.fillStyle='lightgray';
+  ctxEditbar.fillRect(editBar[0], editBar[1], editBar[2], editBar[3]);
+
+  //draw slider labels
+  if(opacitySliderVisible)
+  {
+    ctxEditbar.drawImage(opacityImage, canvasWidth-0.45*toolBarWidth, 0.30*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
+
+    ctxEditbar.globalAlpha = 0.2;
+    ctxEditbar.drawImage(opacityImage, canvasWidth-1.1*toolBarWidth, 0.30*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
+    ctxEditbar.globalAlpha = 1.0;
+
+  }
+
+  if(textSliderVisible)
+  {
+    ctxEditbar.drawImage(textSizeImage, canvasWidth-0.45*toolBarWidth, 0.20*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
+    ctxEditbar.drawImage(textSizeImage, canvasWidth-1.1*toolBarWidth, 0.21*canvasHeight, 0.015*canvasWidth, 0.015*canvasWidth);
+  }
+
+
+}
+
+var opacityImage, textSizeImage, textSizeSmallImage;
+
+function initImages()
+{
+  opacityImage = new Image();
+  opacityImage.src = 'opacity.png';
+  textSizeSmallImage = new Image();
+  textSizeSmallImage.src = 'textSizeSmall.png';
+  textSizeImage = new Image();
+  textSizeImage.src = 'textSize.png';
 }
 
 //dont need this? just draw when changed or have shouldAnimate variable
@@ -609,6 +648,7 @@ window.onmousedown = function(e)
 	  //display all edit inputs, and update their values
 	  colorInput.style.opacity = 1.0;
 	  opacitySlider.style.opacity = 1.0;
+    opacitySliderVisible = true;
 	  opacitySlider.value = focusedElement.opacity * 100;
 
 
@@ -636,7 +676,8 @@ window.onmousedown = function(e)
       }
 	  else
 	  {
-		fontSizeInput.style.opacity = 1.0;
+		    fontSizeInput.style.opacity = 1.0;
+        textSliderVisible = true;
 	  }
       setAllTextFocusable(false);
       //needs to be for every shape
@@ -708,8 +749,10 @@ window.onmousedown = function(e)
     }
     focusedElement = null;
 	opacitySlider.style.opacity = 0.0;
+  opacitySliderVisible = false;
 	colorInput.style.opacity = 0.0;
 	fontSizeInput.style.opacity = 0.0;
+  textSliderVisible = false;
   }
   // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
   draw();
