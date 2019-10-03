@@ -344,7 +344,7 @@ function init()
   allTools.push(toolImage);
 
   colorInput = document.getElementById("colorInput");
-  fontSizeInput = document.getElementById("fontSizeInput");
+  fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
   // animate();
 
@@ -1127,19 +1127,28 @@ colorInput.addEventListener("keydown", function(event)
   }
 });
 
-fontSizeInput.onkeydown = function(event)
+fontSizeInput.oninput = function(event)
 {
-  if (event.keyCode === 13)//enter key
-  {
-    var size = fontSizeInput.value;
-    if(focusedElement instanceof Text)
-    {
-      focusedElement.htmlElement.style.fontSize = size+'vw';
-      //need update element size afterwards
 
-      // focusedElement.updateHtmlElement();
-    }
+  focusedElement.opacity = this.value*0.01;
+  let newSize = this.value/10;
+  if(focusedElement instanceof Text) //not needed?
+  {
+    focusedElement.htmlElement.style.fontSize = newSize+'vw';
   }
+  draw();
+
+  // if (event.keyCode === 13)//enter key
+  // {
+  //   var size = fontSizeInput.value;
+  //   if(focusedElement instanceof Text)
+  //   {
+  //     focusedElement.htmlElement.style.fontSize = size+'vw';
+  //     //need update element size afterwards
+  //
+  //     // focusedElement.updateHtmlElement();
+  //   }
+  // }
 }
 
 function placeDiv(x, y)
@@ -1312,11 +1321,11 @@ function updateColors()
 
 function drawPalette()
 {
-  let colorWidth = (toolBarWidth-2*margin)/5;
+  let colorWidth = (1.08*toolBarWidth)/5;
   for(let i = 0; i < colors.length; i++)
   {
     ctxToolbar.fillStyle = colors[i];
     // ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
-    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+margin+i*colorWidth, canvasHeight/2.5, colorWidth, 0.6*toolWidth);
+    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+i*colorWidth, 0.46*canvasHeight, colorWidth, 0.6*toolWidth);
   }
 }
