@@ -460,7 +460,7 @@ function draw()
   drawToolbar(ctxToolbar);//all tools
   drawEditBar(ctxToolbar);
   if(editToolsVisible)
-  {    
+  {
     drawPalette();
   }
 }
@@ -755,6 +755,11 @@ window.onmousedown = function(e)
       {
         focusedElement.colorIndex = i;
         focusedElement.refreshColor();
+        if(focusedElement instanceof Text)
+        {
+          focusedElement.fontColor = colors[i];
+          focusedElement.updateHtmlElement();
+        }
         // focusedElement.color = colors[i];
       }
     }
@@ -1191,16 +1196,15 @@ colorInput.addEventListener("keydown", function(event)
     shapeColor = colorInput.value;
     // divSquare.color = shapeColor;
     // setColor(shapeColor);
-    focusedElement.color = shapeColor;
-    // if(focusedElement instanceof Text)
-    // {
-    //   focusedElement.fontColor = shapeColor;
-    //   focusedElement.updateHtmlElement();
-    // }
-    // else
-    // {
-    //   focusedElement.color = shapeColor;
-    // }
+    if(focusedElement instanceof Text)
+    {
+      focusedElement.fontColor = shapeColor;
+      focusedElement.updateHtmlElement();
+    }
+    else
+    {
+      focusedElement.color = shapeColor;
+    }
 
   }
 });
@@ -1208,25 +1212,12 @@ colorInput.addEventListener("keydown", function(event)
 fontSizeInput.oninput = function(event)
 {
 
-  focusedElement.opacity = this.value*0.01;
   let newSize = this.value/10;
   if(focusedElement instanceof Text) //not needed?
   {
     focusedElement.htmlElement.style.fontSize = newSize+'vw';
   }
   draw();
-
-  // if (event.keyCode === 13)//enter key
-  // {
-  //   var size = fontSizeInput.value;
-  //   if(focusedElement instanceof Text)
-  //   {
-  //     focusedElement.htmlElement.style.fontSize = size+'vw';
-  //     //need update element size afterwards
-  //
-  //     // focusedElement.updateHtmlElement();
-  //   }
-  // }
 }
 
 function placeDiv(x, y)
