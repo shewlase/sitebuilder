@@ -16,14 +16,14 @@ toolCanvas.width = canvasWidth;
 toolCanvas.height = canvasHeight;
 var toolBar = [0,0, toolBarWidth, canvasHeight/2];
 var editBar = [canvasWidth-1.2*toolBarWidth, 0, 1.2*toolBarWidth, canvasHeight/2];
-// var toolWidth = 0.33*toolBarWidth;
+
 var toolWidth = 0.6*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
-// var workSpaceCenterX = workSpace[0]+0.5*workSpace[2];
+
 var workSpaceCenterX = 0.49*canvasWidth;
 var dragTabSize = 0.2*toolWidth;
 var dragTabColor = 'gray';
-// var toolBar = [0,0, 100, 100];
+
 var divSquare, divSquare2, divSquare3;
 
 var colorInput;
@@ -71,7 +71,6 @@ class Object
   {
     this.drawWholeArea(ctx);
     //for tools
-
     // if(this.id.charAt(0) == 'h' || this.id.charAt(0) == 'p')//should jus tbe first letter H or p
     // {
     //   ctx.font = toolBarWidth/4+'px Luckiest Guy';
@@ -91,7 +90,6 @@ class Object
   drawWholeArea(ctx)
   {
     ctx.fillStyle= this.color;
-    // if(this.id == 'divCircle')
     if(this.id.toLowerCase().includes('circle'))
     {
       ctx.beginPath();
@@ -203,12 +201,10 @@ class Text extends Element
         focusedElement.isFocus = false;
         if(focusedElement.type == 'heading' || focusedElement.type == 'paragraph')
         {
-          // focusedElement.htmlElement.style.backgroundColor = 'transparent';
         }
         // elementDragging.isFocus = false;
       }
       var thisInput = event.target;
-      // thisInput.style.backgroundColor = 'white';
       var idToCheck = thisInput.id;
       if(idToCheck.charAt(0) == 'h')
       {
@@ -218,10 +214,8 @@ class Text extends Element
       {
         var index = parseInt(idToCheck.substring(9), 10);
       }
-      //7 for heading
 
       var element = allElements[index];
-      // var element = getElementObject();
       element.isFocus = true;
       focusedElement = element;
     }
@@ -246,8 +240,6 @@ class Text extends Element
         var index = parseInt(idToCheck.substring(9), 10);
         var element = allElements[index];
       }
-      //7 for heading
-
     }
     document.getElementsByTagName('body')[0].insertBefore(activeInput, colorInput);
     activeInput.focus();
@@ -258,11 +250,9 @@ class Text extends Element
     {
       //white when editing text, transparent when not
       this.color = 'rgba(255,255,255,0.5)';
-      // this.drawAllTabs(ctx);
     }
     else
     {
-      // this.color = 'rgba(255,255,0)';
       this.color = 'rgba(255,255,255,0.0)';
     }
     this.drawWholeArea(ctx);
@@ -282,7 +272,6 @@ class BuildImage extends Element
   constructor(id, x, y, width, height, colorIndex, type)
   {
     super(id, x, y, width, height, colorIndex, type);
-    // this.source = 'grenade.jpg';
     var newHtmlImage = document.createElement('img');
     this.htmlElement = newHtmlImage;
     this.htmlElement.id = this.id;
@@ -292,8 +281,6 @@ class BuildImage extends Element
     this.canvasImage = new Image();
     this.canvasImage.src = this.src;
 
-    // this.htmlElement.src = this.source;
-    // document.getElementsByTagName('body')[0].insertBefore(newHtmlImage, colorInput);
     this.updateHtmlElement();
   }
 
@@ -326,39 +313,23 @@ function init()
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
-  //blue, yellow orange
   colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+    //blue, yellow orange
   // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
   divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 3);
-  // divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
-  // divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
-  // divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
   toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1, textSizeImage);
   toolHeading.color = 'rgba(1,1,1,0.0)';
-  // toolHeading = new Object('h', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
-  // toolHeading2 = new Object('h2', 2*margin+toolWidth, 2*margin+2*toolWidth, toolWidth, toolWidth, 0);
-  // toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
   toolImage = new Object('img', margin, 0.3*canvasHeight, toolWidth, toolWidth, 2, imageImage);
-  // toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
-  // ctx.font = toolBarWidth/4+'px Luckiest Guy';
 
   allTools.push(divSquare);
-  // allTools.push(divSquare2);
-  // allTools.push(divSquare3);
-  // allTools.push(divSquare4);
   allTools.push(toolHeading);
-  // allTools.push(toolHeading2);
-  // allTools.push(toolParagraph);
   allTools.push(toolImage);
 
   colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
-
-  // animate();
-
   //need delay to wait for google font to load
   setTimeout(draw, 500);
   // draw();
@@ -367,15 +338,11 @@ function init()
 function drawToolbar(ctxToolbar)
 {
   ctxToolbar.fillStyle='lightgray';
-  // ctx.fillStyle='#F6FEAA';
-  // ctx.fillRect(0,0,toolBarWidth,canvasHeight);
   ctxToolbar.fillRect(toolBar[0], toolBar[1], toolBar[2], toolBar[3]);
   for(var i = 0; i < allTools.length; i++)
   {
     allTools[i].draw(ctxToolbar);
   }
-  // divSquare.draw(ctx);
-  // ctx.fillRect(20, 20, 150, 100);
 }
 
 function drawEditBar(ctxEditbar)
@@ -400,8 +367,6 @@ function drawEditBar(ctxEditbar)
     ctxEditbar.drawImage(textSizeImage, canvasWidth-0.45*toolBarWidth, 0.20*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
     ctxEditbar.drawImage(textSizeImage, canvasWidth-1.1*toolBarWidth, 0.21*canvasHeight, 0.015*canvasWidth, 0.015*canvasWidth);
   }
-
-
 }
 
 var opacityImage, textSizeImage, textSizeSmallImage, imageImage;
@@ -418,13 +383,6 @@ function initImages()
   imageImage.src = 'imageIcon2.jpg';
 }
 
-//dont need this? just draw when changed or have shouldAnimate variable
-// function animate()
-// {
-// 	requestAnimationFrame(animate);
-//   draw();
-// }
-
 function draw()
 {
 
@@ -437,26 +395,10 @@ function draw()
     allElements[i].draw(ctx);
     ctx.globalAlpha = 1.0;
   }
-  // for(var i=0; i<allElements.length; i++)
-  // {
-  //   if(allElements[i].isFocus)
-  //   {
-  //     allElements[i].drawAllTabs(ctx);
-  //   }
-  // }
   for(var i=0; i<selectedElements.length; i++)
   {
       selectedElements[i].drawAllTabs(ctx);
   }
-  // for(var i=0; i<allHeadings.length; i++)
-  // {
-  //     heading = allHeadings[i];
-  //     if(heading.isFocus)
-  //     {
-  //       ctx.fillStyle= dragTabColor;
-  //       ctx.fillRect(heading.x+heading.width, heading.y+heading.height, dragTabSize, dragTabSize);
-  //     }
-  // }
   drawToolbar(ctxToolbar);//all tools
   drawEditBar(ctxToolbar);
   if(editToolsVisible)
