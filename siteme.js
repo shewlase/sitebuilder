@@ -652,11 +652,8 @@ window.onmousedown = function(e)
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
 
-	  //display all edit inputs, and update their values
-	  colorInput.style.opacity = 1.0;
-	  opacitySlider.style.opacity = 1.0;
-    editToolsVisible = true;
-	  opacitySlider.value = focusedElement.opacity * 100;
+
+      showEditTools();
 
 
 
@@ -683,8 +680,7 @@ window.onmousedown = function(e)
       }
 	  else
 	  {
-		    fontSizeInput.style.opacity = 1.0;
-        textSliderVisible = true;
+      showTextTools();
 	  }
       setAllTextFocusable(false);
       //needs to be for every shape
@@ -897,6 +893,7 @@ window.onmouseup = function(e)
         // droppedShape.isFocus = true;
         focusedElement = droppedShape;
         selectedElements.push(droppedShape);
+        showEditTools();
       }
       else if (elementDragging.id.charAt(0) == 'h' && elementDragging.type == null) //type == tool?
       {
@@ -915,6 +912,8 @@ window.onmouseup = function(e)
         // var insertBeforeMe = document.querySelector("#colorInput");
         focusedElement = newHeading;
         selectedElements.push(newHeading);
+        showEditTools();
+        showTextTools();
       }
       else if (elementDragging.id.charAt(0) == 'p' && elementDragging.type == null)
       {
@@ -934,6 +933,7 @@ window.onmouseup = function(e)
         focusedElement = newImage;
         selectedElements.push(newImage);
         imageSelector.click();
+        showEditTools();
       }
 
       elementDragging.x = startOfDrag[0];
@@ -1187,6 +1187,21 @@ function nudgeElements(direction)
   {
     focusedElement.updateHtmlElement();
   }
+}
+
+//display all edit inputs, and update their values
+function showEditTools()
+{
+  editToolsVisible = true;
+  colorInput.style.opacity = 1.0;
+  opacitySlider.style.opacity = 1.0;
+  opacitySlider.value = focusedElement.opacity * 100;
+}
+
+function showTextTools()
+{
+  fontSizeInput.style.opacity = 1.0;
+  textSliderVisible = true;
 }
 
 colorInput.addEventListener("keydown", function(event)
