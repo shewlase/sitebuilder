@@ -49,7 +49,7 @@ var textSliderVisible = false;
 //Class definitions
 class Object
 {
-  constructor(id, x, y, width, height, colorIndex)
+  constructor(id, x, y, width, height, colorIndex, image)
   {
     this.id = id;
     this.x = x;
@@ -59,6 +59,7 @@ class Object
     this.colorIndex = colorIndex;
     this.color = colors[colorIndex];
     this.opacity = 1.0;
+    this.image = image;
   }
 
   refreshColor()
@@ -71,19 +72,19 @@ class Object
     this.drawWholeArea(ctx);
     //for tools
 
-    if(this.id.charAt(0) == 'h' || this.id.charAt(0) == 'p')//should jus tbe first letter H or p
-    {
-      ctx.font = toolBarWidth/4+'px Luckiest Guy';
-      // context.font = 0.5*bubbleHeight+'px Righteous';
-      // var wordWidth = context.measureText(this.messageToSend).width;
-      ctx.fillStyle='black';
-      // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
-      ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
-    }
+    // if(this.id.charAt(0) == 'h' || this.id.charAt(0) == 'p')//should jus tbe first letter H or p
+    // {
+    //   ctx.font = toolBarWidth/4+'px Luckiest Guy';
+    //   // context.font = 0.5*bubbleHeight+'px Righteous';
+    //   // var wordWidth = context.measureText(this.messageToSend).width;
+    //   ctx.fillStyle='black';
+    //   // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
+    //   ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
+    // }
     //check if image assigned
-    if()
+    if(this.image != null)
     {
-      
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
   }
 
@@ -321,6 +322,7 @@ function init()
   allTools = [];
   selectedElements = [];
   margin = toolWidth/3;
+  initImages();
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
@@ -329,15 +331,16 @@ function init()
   // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
-  divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 0);
+  divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 3);
   // divSquare2 = new Object('divCircle', 2*margin+toolWidth, margin, toolWidth, toolWidth, 1);
   // divSquare3 = new Object('divSquare', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // divSquare4 = new Object('divCircle', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1);
+  toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1, textSizeImage);
+  toolHeading.color = 'rgba(1,1,1,0.0)';
   // toolHeading = new Object('h', margin, 2*margin+toolWidth, toolWidth, toolWidth, 2);
   // toolHeading2 = new Object('h2', 2*margin+toolWidth, 2*margin+2*toolWidth, toolWidth, toolWidth, 0);
   // toolParagraph = new Object('p', 2*margin+toolWidth, 2*margin+toolWidth, toolWidth, toolWidth, 3);
-  toolImage = new Object('img', margin, 0.3*canvasHeight, toolWidth, toolWidth, 2);
+  toolImage = new Object('img', margin, 0.3*canvasHeight, toolWidth, toolWidth, 2, imageImage);
   // toolImage = new Object('img', margin, 3*margin+2*toolWidth, toolWidth, toolWidth, 4);
   // ctx.font = toolBarWidth/4+'px Luckiest Guy';
 
@@ -354,7 +357,6 @@ function init()
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
 
-  initImages();
   // animate();
 
   //need delay to wait for google font to load
@@ -402,7 +404,7 @@ function drawEditBar(ctxEditbar)
 
 }
 
-var opacityImage, textSizeImage, textSizeSmallImage;
+var opacityImage, textSizeImage, textSizeSmallImage, imageImage;
 
 function initImages()
 {
@@ -412,6 +414,8 @@ function initImages()
   textSizeSmallImage.src = 'textSizeSmall.png';
   textSizeImage = new Image();
   textSizeImage.src = 'textSize.png';
+  imageImage = new Image();
+  imageImage.src = 'imageIcon2.jpg';
 }
 
 //dont need this? just draw when changed or have shouldAnimate variable
@@ -917,6 +921,11 @@ window.onmouseup = function(e)
     {
 
     }
+
+    if(focusedElement.x < toolBarWidth)
+    {
+      focusedElement.x = toolBarWidth;
+    }
     // var droppedShape = new Shape('square'+allElements.length, e.pageX, e.pageY, elementDragging.width, elementDragging.height, elementDragging.color ,'square'));
     //could animate this back (grow another one on toolbar)
 
@@ -925,6 +934,10 @@ window.onmouseup = function(e)
   else if(isMovingShape)
   {
     isMovingShape = false;
+    if(elementDragging.x < toolBarWidth)
+    {
+      elementDragging.x = toolBarWidth;
+    }
   }
   else if(isResizing)
   {
@@ -943,6 +956,11 @@ window.onmouseup = function(e)
     else
     {
       elementDragging.height = sizeStartOfDrag[1] + yDifference;
+    }
+
+    if(elementDragging.width > canvasWidth - (2*toolBarWidth))
+    {
+      elementDragging.width = canvasWidth - (2*toolBarWidth);
     }
   }
 
