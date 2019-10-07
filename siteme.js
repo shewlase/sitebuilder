@@ -43,7 +43,7 @@ var shiftHeld = false;
 var mouseX, mouseY;
 var clipboardItem;
 
-var opacitySliderVisible = false;
+var editToolsVisible = false;
 var textSliderVisible = false;
 
 //Class definitions
@@ -385,7 +385,7 @@ function drawEditBar(ctxEditbar)
   ctxEditbar.fillRect(editBar[0], editBar[1], editBar[2], editBar[3]);
 
   //draw slider labels
-  if(opacitySliderVisible)
+  if(editToolsVisible)
   {
     ctxEditbar.drawImage(opacityImage, canvasWidth-0.45*toolBarWidth, 0.30*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
 
@@ -459,7 +459,10 @@ function draw()
   // }
   drawToolbar(ctxToolbar);//all tools
   drawEditBar(ctxToolbar);
-  drawPalette();
+  if(editToolsVisible)
+  {    
+    drawPalette();
+  }
 }
 
 function checkClickTab(clickX, clickY)
@@ -652,7 +655,7 @@ window.onmousedown = function(e)
 	  //display all edit inputs, and update their values
 	  colorInput.style.opacity = 1.0;
 	  opacitySlider.style.opacity = 1.0;
-    opacitySliderVisible = true;
+    editToolsVisible = true;
 	  opacitySlider.value = focusedElement.opacity * 100;
 
 
@@ -743,6 +746,20 @@ window.onmousedown = function(e)
     nothingClicked = false;
   }
 
+  if(collides(e.pageX, e.pageY, 5, 5, editBar[0], paletteY, 5*colorWidth, colorHeight))
+  {
+    for(let i = 0; i < colors.length; i++)
+    {
+      let colorX = editBar[0]+i*colorWidth;
+      if(e.pageX > colorX && e.pageX < colorX+colorWidth)
+      {
+        focusedElement.colorIndex = i;
+        focusedElement.refreshColor();
+        // focusedElement.color = colors[i];
+      }
+    }
+  }
+  //only works if background of workspace clicked, need deselect hoykey?
   if(nothingClicked)
   {
     selectedElements = [];
@@ -752,11 +769,11 @@ window.onmousedown = function(e)
       // elementDragging.isFocus = false;
     }
     focusedElement = null;
-	opacitySlider.style.opacity = 0.0;
-  opacitySliderVisible = false;
-	colorInput.style.opacity = 0.0;
-	fontSizeInput.style.opacity = 0.0;
-  textSliderVisible = false;
+  	opacitySlider.style.opacity = 0.0;
+    editToolsVisible = false;
+  	colorInput.style.opacity = 0.0;
+  	fontSizeInput.style.opacity = 0.0;
+    textSliderVisible = false;
   }
   // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
   draw();
@@ -1214,7 +1231,7 @@ fontSizeInput.oninput = function(event)
 
 function placeDiv(x, y)
 {
-  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, 0,'square');
+  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, 3,'square');
   // var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
   allElements.push(droppedShape);
   // droppedShape.isFocus = true;
@@ -1379,14 +1396,15 @@ function updateColors()
   draw();
 }
 
-
+let paletteY = 0.46*canvasHeight;
+let colorHeight = 0.6*toolWidth;
+let colorWidth = (1.08*toolBarWidth)/5;
 function drawPalette()
 {
-  let colorWidth = (1.08*toolBarWidth)/5;
   for(let i = 0; i < colors.length; i++)
   {
     ctxToolbar.fillStyle = colors[i];
     // ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
-    ctxToolbar.fillRect(canvasWidth-1.2*toolBarWidth+i*colorWidth, 0.46*canvasHeight, colorWidth, 0.6*toolWidth);
+    ctxToolbar.fillRect(editBar[0]+i*colorWidth, paletteY, colorWidth, colorHeight);
   }
 }
