@@ -742,12 +742,12 @@ window.onmousedown = function(e)
     nothingClicked = false;
   }
 
-  if(collides(e.pageX, e.pageY, 5, 5, editBar[0], paletteY, 5*colorWidth, colorHeight))
+  if(collides(e.clientX, e.clientY, 5, 5, editBar[0], paletteY, 5*colorWidth, colorHeight))
   {
     for(let i = 0; i < colors.length; i++)
     {
       let colorX = editBar[0]+i*colorWidth;
-      if(e.pageX > colorX && e.pageX < colorX+colorWidth)
+      if(e.clientX > colorX && e.clientX < colorX+colorWidth)
       {
         focusedElement.colorIndex = i;
         focusedElement.refreshColor();
