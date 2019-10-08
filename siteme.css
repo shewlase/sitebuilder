@@ -4,6 +4,17 @@ html,  body
   overflow-x: hidden;
 }
 
+h1
+{
+  font-family: 'Righteous', sans-serif;
+}
+
+h2
+{
+  text-align: right;
+  font-family: 'Righteous', sans-serif;
+}
+
 
 #canvas
 {
@@ -12,7 +23,8 @@ html,  body
   /* width: 800px;
   height: 800px; */
   /* background-color: rgba(0,0,255,0.5); */
-  background-color: #e1e1e1;
+  /* background-color: #e1e1e1; */
+  background-color: white;
   /* left: 10vw; */
   position: absolute;
   /* should be auto?, easier to update other objects on window resize */
@@ -38,6 +50,7 @@ html,  body
   bottom: 10vh;
   position: fixed;
   opacity: 0.0;
+  display: none;
 }
 
 #fontSizeInput
@@ -47,6 +60,32 @@ html,  body
   position: fixed;
   opacity: 0.0;
 }
+
+#introModal
+{
+  /* width: 90vw; */
+  /* height: 80vh; */
+  position: absolute;
+  background-color: white;
+  left: 20vw;
+  top: 10vh;
+  /* border: 1vw solid black; */
+}
+
+#introVid
+{
+  width: 60vw;
+}
+
+#darkenBackground
+{
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.4);
+  position: absolute;
+}
+
+
 
 input
 {

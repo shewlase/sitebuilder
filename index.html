@@ -20,6 +20,18 @@
     <input type="range" min="0" max="100" value="100" class="slider" id="fontSizeSlider">
     <input type="range" min="0" max="100" value="100" class="slider" id="opacitySlider">
     <img id='im' src=''></img>
+
+    <div id='darkenBackground'></div>
+
+    <div id='introModal'>
+      <video id='introVid' autoplay loop muted>
+        <source src="dragdrop.mp4" type="video/mp4">
+      </video>
+      <h1>Drag and drop to build</h1>
+      <h2 onmousedown='closeIntro()'>GO!</h2>
+		</div>
+
     <script src="siteme.js"></script>
+
   </body>
 </html>

@@ -174,7 +174,6 @@ class Text extends Element
       activeInput = document.createElement('input');
       activeInput.classList.add("headingInput");
       activeInput.type = 'text';
-
     }
     else if(elementDragging.id == 'h2')
     {
@@ -225,8 +224,10 @@ class Text extends Element
     {
       var thisInput = event.target;
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
-      ctx.font = fontSize+' Luckiest Guy'; //just for measurement
-      var wordWidth = 100+ctx.measureText(thisInput.value).width;
+      // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
+      ctx.font = fontSize+' Righteous'; //just for measurement
+      // let fontSizeVw = element.
+      var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
       var idToCheck = thisInput.id;
       if(idToCheck.charAt(0) == 'h')
       {
@@ -843,7 +844,8 @@ window.onmouseup = function(e)
         //should take font size for height and width
         // var newHeading = [elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth];
         var id = "heading" +(allElements.length);
-        var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*4,  toolWidth, 'black', 'heading');
+        var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*2,  0.04*canvasWidth, 'black', 'heading');
+        // var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*4,  toolWidth, 'black', 'heading');
         if(elementDragging.id.charAt(1) == '1')
         {
           newHeading.height = toolWidth*1.3;
@@ -997,8 +999,8 @@ window.onkeydown = function(e)
         var id = "heading" +(allElements.length);
         //dummy object, bad hack
         elementDragging = new Object('h', 0, 0, toolWidth, toolWidth, 0);
-        var newHeading = new Text(id, mouseX, mouseY,  toolWidth*4,  toolWidth, 'black', 'heading');
-        newHeading.height = toolWidth*1.3;
+        var newHeading = new Text(id, mouseX, mouseY,  toolWidth*2,  0.04*canvasWidth, 'black', 'heading');
+        // newHeading.height = toolWidth*1.3;
         // allHeadings.push(newHeading);
         // var insertBeforeMe = document.querySelector("#colorInput");
 
@@ -1355,4 +1357,10 @@ function drawPalette()
     // ctxToolbar.fillRect(margin+i*colorWidth, canvasHeight/4, colorWidth, toolWidth);
     ctxToolbar.fillRect(editBar[0]+i*colorWidth, paletteY, colorWidth, colorHeight);
   }
+}
+
+function closeIntro()
+{
+  document.getElementById('introModal').style.display = 'none';
+  document.getElementById('darkenBackground').style.display = 'none';
 }
