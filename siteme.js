@@ -220,7 +220,7 @@ class Text extends Element
     }
 
 
-    activeInput.onkeypress = function(event)
+    activeInput.onkeydown = function(event)
     {
       var thisInput = event.target;
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
@@ -236,15 +236,36 @@ class Text extends Element
         var element = allElements[index];
         element.width = wordWidth;
       }
-      else if(idToCheck.charAt(0) == 'p')
-      {
-        var index = parseInt(idToCheck.substring(9), 10);
-        var element = allElements[index];
-      }
+      // else if(idToCheck.charAt(0) == 'p')
+      // {
+      //   var index = parseInt(idToCheck.substring(9), 10);
+      //   var element = allElements[index];
+      // }
     }
+
     document.getElementsByTagName('body')[0].insertBefore(activeInput, colorInput);
     activeInput.focus();
   }
+
+  updateTextObject()
+  {
+    var thisInput = this.htmlElement;
+    var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
+    // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
+    ctx.font = fontSize+' Righteous'; //just for measurement
+    // let fontSizeVw = element.
+    var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
+    var idToCheck = thisInput.id;
+    // if(idToCheck.charAt(0) == 'h')
+    // {
+    var index = parseInt(idToCheck.substring(7), 10);
+    thisInput.style.width = wordWidth+'px';
+    var element = allElements[index];
+    element.width = wordWidth;
+    this.updateHtmlElement();
+    // }
+  }
+
   draw(ctx)
   {
     if(this.isFocus)
@@ -1175,6 +1196,8 @@ fontSizeInput.oninput = function(event)
   if(focusedElement instanceof Text) //not needed?
   {
     focusedElement.htmlElement.style.fontSize = newSize+'vw';
+    focusedElement.height = newSize/100*canvasWidth;
+    focusedElement.updateTextObject();
   }
   draw();
 }
