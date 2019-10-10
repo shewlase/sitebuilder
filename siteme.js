@@ -335,9 +335,9 @@ function init()
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
-  colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+  // colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
     //blue, yellow orange
-  // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', '#2E86AB'];
+  colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
   divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 3);
@@ -893,7 +893,7 @@ window.onmouseup = function(e)
       else if (elementDragging.id == 'img' && elementDragging.type == null)
       {
         var id = "image" +(allElements.length);
-        var newImage = new BuildImage(id, elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth*4, 'rgba(0,0,0,0.0)', 'paragraph');
+        var newImage = new BuildImage(id, elementDragging.x, elementDragging.y,  toolWidth*2,  toolWidth*2, 'rgba(0,0,0,0.0)', 'paragraph');
         allElements.push(newImage);
         focusedElement = newImage;
         selectedElements.push(newImage);
@@ -945,6 +945,7 @@ window.onmouseup = function(e)
       elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
 
+    //check not bigger than workspace
     if(elementDragging.width > canvasWidth - (2*toolBarWidth))
     {
       elementDragging.width = canvasWidth - (2*toolBarWidth);
@@ -1253,10 +1254,11 @@ function imageSelect(e)
       {
         var ratio = imgMeasure.width/imgMeasure.height;
         focusedElement.ratio = ratio;
-        if(imgMeasure.width > 0.8*(canvasWidth-toolBarWidth))
+        if(imgMeasure.width > 0.8*(canvasWidth-2.2*toolBarWidth))
         {
-          focusedElement.width = canvasWidth-toolBarWidth;
+          focusedElement.width = canvasWidth-2.4*toolBarWidth;
           focusedElement.height = focusedElement.width/ratio;
+          focusedElement.x = 0;
         }
         else if(imgMeasure.height > 0.5*canvasHeight)
         {
