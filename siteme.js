@@ -138,7 +138,8 @@ class Element extends Object
       }
       else if(i == 1)//position tab
       {
-        ctx.fillStyle= 'lightblue';
+        ctx.fillStyle= 'lightgray';
+        // ctx.fillStyle= 'lightblue';
       }
       else if(i == 2)//color tab
       {
@@ -321,6 +322,7 @@ class BuildImage extends Element
 }
 
 var colors, margin;
+var trashPositions, copyPositions;
 
 init();
 
@@ -330,14 +332,16 @@ function init()
   allText = [];
   allTools = [];
   selectedElements = [];
+  trashPositions= [canvasWidth-1.1*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
+  copyPositions = [canvasWidth-0.45*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   margin = toolWidth/3;
   initImages();
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
-  // colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+  colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
     //blue, yellow orange
-  colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
+  // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
   divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 3);
@@ -377,11 +381,12 @@ function drawEditBar(ctxEditbar)
   if(editToolsVisible)
   {
     ctxEditbar.drawImage(opacityImage, canvasWidth-0.45*toolBarWidth, 0.30*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
+    ctxEditbar.drawImage(trashImage, trashPositions[0],trashPositions[1],trashPositions[2],trashPositions[3]);
+    ctxEditbar.drawImage(copyImage, copyPositions[0],copyPositions[1],copyPositions[2],copyPositions[3]);
 
     ctxEditbar.globalAlpha = 0.2;
     ctxEditbar.drawImage(opacityImage, canvasWidth-1.1*toolBarWidth, 0.30*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth);
     ctxEditbar.globalAlpha = 1.0;
-
   }
 
   if(textSliderVisible)
@@ -391,7 +396,7 @@ function drawEditBar(ctxEditbar)
   }
 }
 
-var opacityImage, textSizeImage, textSizeSmallImage, imageImage;
+var opacityImage, textSizeImage, textSizeSmallImage, imageImage, copyImage, trashImage;
 
 function initImages()
 {
@@ -403,6 +408,10 @@ function initImages()
   textSizeImage.src = 'textSize.png';
   imageImage = new Image();
   imageImage.src = 'imageIcon2.jpg';
+  trashImage = new Image();
+  trashImage.src = 'trashIcon.png';
+  copyImage = new Image();
+  copyImage.src = 'copyIcon2.png';
 }
 
 function draw()
@@ -724,6 +733,20 @@ window.onmousedown = function(e)
       }
     }
   }
+  //copy icon
+  if(collides(e.clientX, e.clientY, 5, 5, copyPositions[0],copyPositions[1],copyPositions[2],copyPositions[3]))
+  {
+    copyFocusedElements();
+  }//trash icon
+  else if(collides(e.clientX, e.clientY, 5, 5, trashPositions[0],trashPositions[1],trashPositions[2],trashPositions[3]))
+  {
+    if(focusedElement instanceof Element
+    && !(focusedElement instanceof Text))
+    {
+      allElements.splice(allElements.indexOf(focusedElement), 1);
+      selectedElements.splice(allElements.indexOf(focusedElement), 1);
+    }
+  }
   //only works if background of workspace clicked, need deselect hoykey?
   if(nothingClicked)
   {
@@ -1006,7 +1029,10 @@ window.onkeydown = function(e)
       shiftHeld = true;
       break;
     case 67: //C key
-      copyFocusedElements();
+      if(controlHeld)
+      {
+        copyFocusedElements();
+      }
       break;
     case 68: //D key
       //so doesnt trigger while typing in text area
@@ -1216,7 +1242,7 @@ function placeDiv(x, y)
 
 function copyFocusedElements()
 {
-  if(controlHeld && focusedElement != null)
+  if(focusedElement != null)
   {
     //need checks for each element type, text, image, div
       //if text, change .text/.value to match,
