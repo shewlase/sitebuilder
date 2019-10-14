@@ -6,7 +6,9 @@ html,  body
 
 h1
 {
-  font-family: 'Righteous', sans-serif;
+  /* font-family: 'Paytone One', sans-serif; */
+  font-family: 'Baloo', sans-serif;
+  /* font-family: 'Righteous', sans-serif; */
 }
 
 h2
@@ -65,6 +67,7 @@ h2
 {
   /* width: 90vw; */
   /* height: 80vh; */
+  display: none;
   position: absolute;
   background-color: white;
   left: 20vw;
@@ -83,6 +86,7 @@ h2
   height: 100vh;
   background-color: rgba(0,0,0,0.4);
   position: absolute;
+  display: none;
 }
 
 
@@ -90,10 +94,12 @@ h2
 input
 {
   /* font-family: "Luckiest Guy", cursive; */
-	font-family: 'Righteous', cursive;
+	/* font-family: 'Baloo', cursive; */
   width: 9vw;
   /* padding: 2vw; */
 }
+
+
 
 /* input:focus, textarea:focus
 {
@@ -237,8 +243,32 @@ img
   font-style: normal;
   font-weight: 400;
   src: local('Righteous'), local('Righteous-Regular'),
-       url('../fonts/righteous-v8-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('../fonts/righteous-v8-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('fonts/righteous-v8-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('fonts/righteous-v8-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* baloo-regular - latin */
+@font-face {
+  font-family: 'Baloo';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/baloo-v5-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Baloo Regular'), local('Baloo-Regular'),
+       url('fonts/baloo-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/baloo-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('fonts/baloo-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('fonts/baloo-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('fonts/baloo-v5-latin-regular.svg#Baloo') format('svg'); /* Legacy iOS */
+}
+
+/* paytone-one-regular - latin */
+@font-face {
+  font-family: 'Paytone One';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Paytone One Regular'), local('PaytoneOne-Regular'),
+       url('fonts/paytone-one-v12-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('fonts/paytone-one-v12-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 /* .slider {
@@ -251,3 +281,13 @@ img
   -webkit-transition: .2s;
   transition: opacity .2s;
 } */
+
+
+select
+{
+  position: fixed;
+  right: 0vw;
+  width: 10vw;
+  opacity: 0.0;
+  /* font-family: "Baloo"; */
+}

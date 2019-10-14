@@ -15,6 +15,11 @@
     <canvas id='toolBar'></canvas>
     <!-- <p id='test'>test</p> -->
     <input type="file" id="imageSelector" accept="image/*"/>
+
+    <select id="fontSelector" onchange="changeFont()">
+      <!-- options generated in javascript -->
+    </select>
+
     <input id = "fontSizeInput" type="text" value="2">
     <input id = "colorInput" type="text" value="black">
     <input type="range" min="5" max="200" value="100" class="slider" id="fontSizeSlider">

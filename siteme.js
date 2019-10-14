@@ -167,6 +167,7 @@ class Text extends Element
   {
     super(id, x, y, width, height, color, type);
     this.fontColor = 'black';
+    this.font = fontDropdown.options[fontDropdown.selectedIndex].value;
     //create new input at newHeadingx y
 
     //elementDragging is the tool dragged
@@ -226,6 +227,7 @@ class Text extends Element
       var thisInput = event.target;
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
       // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
+      // ctx.font = fontSize+' '+; //just for measurement
       ctx.font = fontSize+' Righteous'; //just for measurement
       // let fontSizeVw = element.
       var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
@@ -282,11 +284,13 @@ class Text extends Element
   }
   updateHtmlElement()
   {
-    this.htmlElement.style.left = this.x+'px';
-    this.htmlElement.style.top = this.y+'px';
-    this.htmlElement.style.width = this.width+'px';
-    this.htmlElement.style.height = this.height+'px';
-    this.htmlElement.style.color = this.fontColor;
+    let thisHtmlElementStyle = this.htmlElement.style;
+    thisHtmlElementStyle.left = this.x+'px';
+    thisHtmlElementStyle.top = this.y+'px';
+    thisHtmlElementStyle.width = this.width+'px';
+    thisHtmlElementStyle.height = this.height+'px';
+    thisHtmlElementStyle.color = this.fontColor;
+    thisHtmlElementStyle.fontFamily = this.font;
   }
 }
 
@@ -323,7 +327,7 @@ class BuildImage extends Element
 
 var colors, margin;
 var trashPositions, copyPositions;
-
+var allFonts = ['Righteous', 'Baloo', 'Paytone One', 'Arial'];
 init();
 
 function init()
@@ -335,7 +339,8 @@ function init()
   trashPositions= [canvasWidth-1.1*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   copyPositions = [canvasWidth-0.45*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   margin = toolWidth/3;
-  initImages();
+
+    initImages();
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
@@ -356,6 +361,9 @@ function init()
   colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
+  fontDropdown = document.getElementById("fontSelector");
+
+  buildFontSelector();
   //need delay to wait for google font to load
   setTimeout(draw, 500);
   // draw();
@@ -761,6 +769,7 @@ window.onmousedown = function(e)
     editToolsVisible = false;
   	colorInput.style.opacity = 0.0;
   	fontSizeInput.style.opacity = 0.0;
+  	fontDropdown.style.opacity = 0.0;
     textSliderVisible = false;
   }
   // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
@@ -1193,6 +1202,7 @@ function showEditTools()
 function showTextTools()
 {
   fontSizeInput.style.opacity = 1.0;
+  fontDropdown.style.opacity = 1.0;
   textSliderVisible = true;
 }
 
@@ -1414,4 +1424,43 @@ function closeIntro()
 {
   document.getElementById('introModal').style.display = 'none';
   document.getElementById('darkenBackground').style.display = 'none';
+}
+
+
+
+var fontDropdown;
+// var allFonts = ['Righteous', 'Baloo', 'Paytone One'];
+function buildFontSelector()
+{
+  //create option element, add to select element
+  // fontDropdown.onChange = ;
+
+  for(let i = 0; i < allFonts.length; i++)
+  {
+    let currentFont = document.createElement('option');
+    let currentFontName = allFonts[i];
+    currentFont.value = currentFontName;
+    currentFont.innerHTML = currentFontName;
+    currentFont.style.fontFamily = currentFontName;
+    currentFont.onmousedown = function(event)
+		{
+			changeFont(event.target.value);
+		};
+  	fontDropdown.appendChild(currentFont);
+  }
+  // var title = document.querySelector("#firstPage");
+  // document.body.insertBefore(newDiv,title);
+}
+
+// function changeFont(fontName)
+function changeFont()
+{
+  //change font-family of selected text element
+  let selectedFontName = fontDropdown.options[fontDropdown.selectedIndex].value;
+  // fontDropdown.style.fontFamily = selectedFontName;
+  focusedElement.font = selectedFontName;
+  fontDropdown.style.fontFamily = selectedFontName;
+  focusedElement.updateHtmlElement();
+  // activeInput.style.fontFamily = selectedFontName;
+  // fontDropdown.style.fontFamily = "Righteous";
 }
