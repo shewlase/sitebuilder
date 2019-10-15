@@ -235,9 +235,11 @@ class Text extends Element
       if(idToCheck.charAt(0) == 'h')
       {
         var index = parseInt(idToCheck.substring(7), 10);
-        thisInput.style.width = wordWidth+'px';
-        var element = allElements[index];
-        element.width = wordWidth;
+        setTimeout(function(){
+          thisInput.style.width = wordWidth+'px';
+          var element = allElements[index];
+          element.width = wordWidth;
+        }, 5);
       }
       // else if(idToCheck.charAt(0) == 'p')
       // {
@@ -336,20 +338,22 @@ function init()
   allText = [];
   allTools = [];
   selectedElements = [];
-  trashPositions= [canvasWidth-1.1*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
-  copyPositions = [canvasWidth-0.45*toolBarWidth, 0.10*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
+  trashPositions= [canvasWidth-1.1*toolBarWidth, 0.4*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
+  copyPositions = [canvasWidth-0.45*toolBarWidth, 0.4*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   margin = toolWidth/3;
 
     initImages();
   // colors = ['#C7DFC5','#C1DBE3', '#373737'];
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
-  colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+  // colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
+  colors = ['#ffce67', '#acdacf', '#85c3dc', 'white', '#1c1c1c'];
     //blue, yellow orange
   // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
   //postions need calculating, i*margin, if i%2==0 add top margin etc)
-  divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 3);
+  divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 2);
+  divSquare.color = '#85c3dc';
   toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1, textSizeImage);
   toolHeading.color = 'rgba(1,1,1,0.0)';
   toolImage = new Object('img', margin, 0.3*canvasHeight, toolWidth, toolWidth, 2, imageImage);
@@ -362,6 +366,9 @@ function init()
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
   fontDropdown = document.getElementById("fontSelector");
+  colorInput = document.getElementById("colorPicker");
+
+  colorInput.value = divSquare.color;
 
   buildFontSelector();
   //need delay to wait for google font to load
