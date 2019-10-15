@@ -338,8 +338,8 @@ function init()
   allText = [];
   allTools = [];
   selectedElements = [];
-  trashPositions= [canvasWidth-1.1*toolBarWidth, 0.4*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
-  copyPositions = [canvasWidth-0.45*toolBarWidth, 0.4*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
+  trashPositions= [canvasWidth-1.1*toolBarWidth, 0.375*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
+  copyPositions = [canvasWidth-0.45*toolBarWidth, 0.375*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   margin = toolWidth/3;
 
     initImages();
@@ -347,7 +347,7 @@ function init()
   // colors = ['#420039','#932F6D', '#DCCCFF'];
   // colors = ['#2E86AB','#F5F749', '#F24236'];
   // colors = ['#f27a86','#ffce67', '#acdacf', '#85c3dc', 'white'];
-  colors = ['#ffce67', '#acdacf', '#85c3dc', 'white', '#1c1c1c'];
+  colors = ['#ffce67', '#acdacf', '#85c3dc', '#ffffff', '#1c1c1c'];
     //blue, yellow orange
   // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
@@ -639,11 +639,9 @@ window.onmousedown = function(e)
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
-
+      colorInput.value = focusedElement.color;
 
       showEditTools();
-
-
 
       if(!controlHeld)
       {
@@ -680,6 +678,7 @@ window.onmousedown = function(e)
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
+
     }
                                     //if clicked resize tab
     // if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+shapeToCheck.width, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 2*dragTabSize)
@@ -729,7 +728,7 @@ window.onmousedown = function(e)
   {
     nothingClicked = false;
   }
-
+  //clicked palette
   if(collides(e.clientX, e.clientY, 5, 5, editBar[0], paletteY, 5*colorWidth, colorHeight))
   {
     for(let i = 0; i < colors.length; i++)
@@ -745,6 +744,7 @@ window.onmousedown = function(e)
           focusedElement.updateHtmlElement();
         }
         // focusedElement.color = colors[i];
+        colorInput.value = colors[i];
       }
     }
   }
@@ -1157,6 +1157,10 @@ window.onkeyup = function(e)
   draw();
 }
 
+colorInput.oninput = function(e)
+{
+  setOtherColor(colorInput.value);
+}
 
 function setColor(colorIndex)
 {
@@ -1171,7 +1175,27 @@ function setColor(colorIndex)
     focusedElement.colorIndex = colorIndex;
     focusedElement.refreshColor();
   }
+  colorInput.value = colors[colorIndex];
 }
+
+function setOtherColor(colorString)
+{
+  if(focusedElement instanceof Text)
+  {
+    focusedElement.color = colorString;
+    focusedElement.fontColor = colorString;
+    focusedElement.updateHtmlElement();
+  }
+  else
+  {
+    focusedElement.color = colorString;
+    // focusedElement.refreshColor();
+  }
+
+  focusedElement.draw(ctx);
+}
+
+
 //for movement with arrow keys
     //left up right down = 0 1 2 3
 function nudgeElements(direction)

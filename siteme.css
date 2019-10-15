@@ -243,6 +243,7 @@ img
   position: fixed;
   bottom: 10vh;
   width: 5vw;
+  opacity: 0;
   /* right: 0; */
 }
 input[type="color"] {
