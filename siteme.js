@@ -46,6 +46,7 @@ var clipboardItem;
 var editToolsVisible = false;
 var textSliderVisible = false;
 
+var fontSliderSize;
 //Class definitions
 class Object
 {
@@ -235,11 +236,11 @@ class Text extends Element
       if(idToCheck.charAt(0) == 'h')
       {
         var index = parseInt(idToCheck.substring(7), 10);
-        setTimeout(function(){
+        // setTimeout(function(){
           thisInput.style.width = wordWidth+'px';
           var element = allElements[index];
           element.width = wordWidth;
-        }, 5);
+        // }, 5);
       }
       // else if(idToCheck.charAt(0) == 'p')
       // {
@@ -286,13 +287,14 @@ class Text extends Element
   }
   updateHtmlElement()
   {
-    let thisHtmlElementStyle = this.htmlElement.style;
-    thisHtmlElementStyle.left = this.x+'px';
-    thisHtmlElementStyle.top = this.y+'px';
-    thisHtmlElementStyle.width = this.width+'px';
-    thisHtmlElementStyle.height = this.height+'px';
-    thisHtmlElementStyle.color = this.fontColor;
-    thisHtmlElementStyle.fontFamily = this.font;
+    let style = this.htmlElement.style;
+    style.left = this.x+'px';
+    style.top = this.y+'px';
+    style.width = this.width+'px';
+    style.height = this.height+'px';
+    style.color = this.fontColor;
+    style.fontFamily = this.font;
+    style.fontSize = this.fontSize;
   }
 }
 
@@ -908,7 +910,8 @@ window.onmouseup = function(e)
         // var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*4,  toolWidth, 'black', 'heading');
         if(elementDragging.id.charAt(1) == '1')
         {
-          newHeading.height = toolWidth*1.3;
+          newHeading.height = toolWidth*1.35;
+          newHeading.fontSize = fontSliderSize;
           newHeading.updateHtmlElement();//position, size, color
         }
         // allHeadings.push(newHeading);
@@ -917,7 +920,6 @@ window.onmouseup = function(e)
         focusedElement = newHeading;
         selectedElements.push(newHeading);
         showEditTools();
-        showTextTools();
       }
       else if (elementDragging.id.charAt(0) == 'p' && elementDragging.type == null)
       {
@@ -1055,6 +1057,7 @@ window.onkeydown = function(e)
       if(!(focusedElement instanceof Text))
       {
         placeDiv(mouseX, mouseY);
+        showEditTools();
       }
       break;
     case 84: //T key
@@ -1078,6 +1081,9 @@ window.onkeydown = function(e)
           allElements.push(newHeading);
           newHeading.updateHtmlElement();//position, size, color
         }, 2);
+
+        showTextTools();
+        showEditTools();
       }
         break;
 
@@ -1256,15 +1262,17 @@ colorInput.addEventListener("keydown", function(event)
 
   }
 });
-
 fontSizeInput.oninput = function(event)
 {
 
   let newSize = this.value/10;
   if(focusedElement instanceof Text) //not needed?
   {
-    focusedElement.htmlElement.style.fontSize = newSize+'vw';
-    focusedElement.height = newSize/100*canvasWidth;
+    fontSliderSize = newSize+'vw';
+    // focusedElement.htmlElement.style.fontSize = fontSliderSize;
+    focusedElement.fontSize = fontSliderSize;
+    focusedElement.height = (newSize/100)*1.05*canvasWidth;
+    focusedElement.updateHtmlElement();
     focusedElement.updateTextObject();
   }
   draw();
@@ -1323,7 +1331,7 @@ function imageSelect(e)
         focusedElement.ratio = ratio;
         if(imgMeasure.width > 0.8*(canvasWidth-2.2*toolBarWidth))
         {
-          focusedElement.width = canvasWidth-2.4*toolBarWidth;
+          focusedElement.width = 0.5*(canvasWidth-2.4*toolBarWidth);
           focusedElement.height = focusedElement.width/ratio;
           focusedElement.x = 0;
         }

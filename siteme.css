@@ -242,7 +242,8 @@ img
   right: 0.5vw;
   position: fixed;
   bottom: 10vh;
-  width: 5vw;
+  padding: 0;
+  /* width: 5vw; */
   opacity: 0;
   /* right: 0; */
 }
