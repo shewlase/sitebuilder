@@ -167,7 +167,14 @@ class Text extends Element
   constructor(id, x, y, width, height, color, type)
   {
     super(id, x, y, width, height, color, type);
-    this.fontColor = 'black';
+    this.fontColor = '#000000';
+    let newSize = fontSizeInput.value/10;
+    fontSliderSize = newSize+'vw';
+    // focusedElement.htmlElement.style.fontSize = fontSliderSize;
+    this.fontSize = fontSliderSize;
+    this.height = (newSize/100)*1.05*canvasWidth;
+
+
     this.font = fontDropdown.options[fontDropdown.selectedIndex].value;
     //create new input at newHeadingx y
 
@@ -229,7 +236,7 @@ class Text extends Element
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
       // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
       // ctx.font = fontSize+' '+; //just for measurement
-      ctx.font = fontSize+' Righteous'; //just for measurement
+      ctx.font = fontSize+' Righteous'; //just for measurement, change to match font selector
       // let fontSizeVw = element.
       var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
       var idToCheck = thisInput.id;
@@ -641,7 +648,6 @@ window.onmousedown = function(e)
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
-      colorInput.value = focusedElement.color;
 
       showEditTools();
 
@@ -665,11 +671,18 @@ window.onmousedown = function(e)
       if(!(focusedElement instanceof Text))
       {
         isMovingShape = true;
+        colorInput.value = focusedElement.color;
       }
-	  else
-	  {
-      showTextTools();
-	  }
+      else
+      {
+        colorInput.value = focusedElement.fontColor;
+        updateTextSlider();
+        showTextTools();
+      }
+	  // else
+	  // {
+    //
+	  // }
       setAllTextFocusable(false);
       //needs to be for every shape
       for(var i=0; i<selectedElements.length; i++)
@@ -920,6 +933,7 @@ window.onmouseup = function(e)
         focusedElement = newHeading;
         selectedElements.push(newHeading);
         showEditTools();
+        showTextTools();
       }
       else if (elementDragging.id.charAt(0) == 'p' && elementDragging.type == null)
       {
@@ -1001,10 +1015,10 @@ window.onmouseup = function(e)
     elementDragging.updateHtmlElement();
     elementDragging.htmlElement.focus();
   }
-  else if(elementDragging.id == 'circle')
-  {
-    //dont auto center
-  }
+  // else if(elementDragging.id == 'circle')
+  // {
+  //   //dont auto center
+  // }
   else //only auto pos and center divs
   {
     if(elementDragging != null)
@@ -1080,10 +1094,11 @@ window.onkeydown = function(e)
           selectedElements.push(newHeading);
           allElements.push(newHeading);
           newHeading.updateHtmlElement();//position, size, color
+          showTextTools();
+          showEditTools();
         }, 2);
 
-        showTextTools();
-        showEditTools();
+
       }
         break;
 
@@ -1262,9 +1277,9 @@ colorInput.addEventListener("keydown", function(event)
 
   }
 });
+
 fontSizeInput.oninput = function(event)
 {
-
   let newSize = this.value/10;
   if(focusedElement instanceof Text) //not needed?
   {
@@ -1280,7 +1295,7 @@ fontSizeInput.oninput = function(event)
 
 function placeDiv(x, y)
 {
-  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, 3,'square');
+  var droppedShape = new Element('square', x-2.1*toolWidth,   y -2.1*toolWidth, 2*toolWidth, 2*toolWidth, 2,'square');
   // var droppedShape = new Element('square', x,   y , 2*toolWidth, 2*toolWidth, colors[0],'square');
   allElements.push(droppedShape);
   // droppedShape.isFocus = true;
@@ -1492,14 +1507,20 @@ function buildFontSelector()
 }
 
 // function changeFont(fontName)
-function changeFont()
+  function changeFont()
+  {
+    //change font-family of selected text element
+    let selectedFontName = fontDropdown.options[fontDropdown.selectedIndex].value;
+    // fontDropdown.style.fontFamily = selectedFontName;
+    focusedElement.font = selectedFontName;
+    fontDropdown.style.fontFamily = selectedFontName;
+    focusedElement.updateHtmlElement();
+    // activeInput.style.fontFamily = selectedFontName;
+    // fontDropdown.style.fontFamily = "Righteous";
+  }
+
+function updateTextSlider()
 {
-  //change font-family of selected text element
-  let selectedFontName = fontDropdown.options[fontDropdown.selectedIndex].value;
-  // fontDropdown.style.fontFamily = selectedFontName;
-  focusedElement.font = selectedFontName;
-  fontDropdown.style.fontFamily = selectedFontName;
-  focusedElement.updateHtmlElement();
-  // activeInput.style.fontFamily = selectedFontName;
-  // fontDropdown.style.fontFamily = "Righteous";
+  let sizeAsInt = parseInt(focusedElement.fontSize.substring(0, focusedElement.fontSize.length-2), 10);
+  fontSizeInput.value = sizeAsInt*10;
 }
