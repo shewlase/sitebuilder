@@ -313,25 +313,25 @@ class BuildImage extends Element
   constructor(id, x, y, width, height, colorIndex, type)
   {
     super(id, x, y, width, height, colorIndex, type);
-    var newHtmlImage = document.createElement('img');
-    this.htmlElement = newHtmlImage;
-    this.htmlElement.id = this.id;
+    // var newHtmlImage = document.createElement('img');
+    // this.htmlElement = newHtmlImage;
+    // this.htmlElement.id = this.id;
     this.ratio = 1;
 
     this.src = '';
     this.canvasImage = new Image();
     this.canvasImage.src = this.src;
 
-    this.updateHtmlElement();
+    // this.updateHtmlElement();
   }
 
-  updateHtmlElement()
-  {
-    this.htmlElement.style.left = this.x+'px';
-    this.htmlElement.style.top = this.y+'px';
-    this.htmlElement.style.width = this.width+'px';
-    this.htmlElement.style.height = this.height+'px';
-  }
+  // updateHtmlElement()
+  // {
+  //   this.htmlElement.style.left = this.x+'px';
+  //   this.htmlElement.style.top = this.y+'px';
+  //   this.htmlElement.style.width = this.width+'px';
+  //   this.htmlElement.style.height = this.height+'px';
+  // }
 
   draw(ctx)
   {
@@ -817,8 +817,7 @@ window.onmousemove = function(e)
     elementDragging.x = startOfDrag[0] + xDifference;
     elementDragging.y = startOfDrag[1] + yDifference;
     // if(elementDragging.type == 'heading' || elementDragging.type == 'paragraph')
-    if(elementDragging instanceof Text
-    || elementDragging instanceof BuildImage)
+    if(elementDragging instanceof Text)
     {
       elementDragging.updateHtmlElement();
     }
@@ -838,8 +837,7 @@ window.onmousemove = function(e)
       // elementToMove.x = startOfDrag[0] + xDifference;
       // elementToMove.y = startOfDrag[1] + yDifference;
       // if(elementDragging.type == 'heading' || elementDragging.type == 'paragraph')
-      if(elementToMove instanceof Text
-      || elementToMove instanceof BuildImage)
+      if(elementToMove instanceof Text)
       {
         elementToMove.updateHtmlElement();
       }
@@ -871,10 +869,6 @@ window.onmousemove = function(e)
     if(shapeToCheck instanceof Text)
     {
       // var input = document.getElementById(elementDragging.id);
-      shapeToCheck.updateHtmlElement();
-    }
-    else if(shapeToCheck instanceof BuildImage)
-    {
       shapeToCheck.updateHtmlElement();
     }
 
@@ -1012,12 +1006,13 @@ window.onmouseup = function(e)
 
 
 
-  if(elementDragging instanceof Text
-  || elementDragging instanceof BuildImage)
+
+  if(elementDragging instanceof Text)
   {
     elementDragging.updateHtmlElement();
     elementDragging.htmlElement.focus();
   }
+
   // else if(elementDragging.id == 'circle')
   // {
   //   //dont auto center
@@ -1333,7 +1328,7 @@ function copyElement(element)
       //clone html element
       let newText = element.htmlElement.cloneNode(true);
       activeInput = newText;
-      clipboardItem = new Text(element.id, element.x+0.03*canvasWidth,   element.y+0.03*canvasWidth, element.width, element.height, element.colorIndex ,'heading');
+      clipboardItem = new Text(element.id, element.x+0.03*canvasWidth,   element.y+0.03*canvasWidth, element.width, element.height, element.colorIndex ,'text');
       clipboardItem.fontColor = element.fontColor;
       clipboardItem.fontSize = element.fontSize;
       clipboardItem.htmlElement = newText;
@@ -1341,17 +1336,22 @@ function copyElement(element)
     }
     else if(element instanceof BuildImage)
     {
-      let newImage = element.htmlElement.cloneNode(true);
-      clipboardItem.htmlElement = newImage;
-      clipboardItem.updateHtmlElement();
+      // let newImage = element.htmlElement.cloneNode(true);
+      clipboardItem = new BuildImage(element.id, element.x+0.03*canvasWidth,   element.y+0.03*canvasWidth, element.width, element.height, element.colorIndex ,'image');
+      //
+      // clipboardItem.htmlElement = newImage;
+      clipboardItem.src = element.src;
+      clipboardItem.canvasImage.src = element.src;
+      // clipboardItem.updateHtmlElement();
     }
     else
     {
-      clipboardItem =  new Element(element.id, element.x,   element.y , element.width, element.height, element.colorIndex ,'circle');
+      clipboardItem =  new Element(element.id, element.x,   element.y , element.width, element.height, element.colorIndex ,'square');
       clipboardItem.x += 0.03*canvasWidth;
       clipboardItem.y += 0.03*canvasWidth;
-      clipboardItem.opacity = element.opacity;
     }
+
+    clipboardItem.opacity = element.opacity;
 
     element.isFocus = false;
     focusedElement = clipboardItem;
@@ -1372,7 +1372,7 @@ imageSelector.addEventListener('change', imageSelect, false);
 function imageSelect(e)
 {
   var fr = new FileReader;
-  var image = focusedElement.htmlElement;
+  // var image = focusedElement.htmlElement;
   fr.onload = function()
   {
       var imgMeasure = new Image;
@@ -1397,10 +1397,10 @@ function imageSelect(e)
           focusedElement.width = imgMeasure.width;
           focusedElement.height = imgMeasure.height;
         }
-        focusedElement.updateHtmlElement();
+        // focusedElement.updateHtmlElement();
       };
       imgMeasure.src = fr.result;
-      image.src = fr.result;
+      // image.src = fr.result;
 
       focusedElement.src = fr.result;
       focusedElement.canvasImage.src = fr.result;
