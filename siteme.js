@@ -177,30 +177,33 @@ class Text extends Element
 
     this.font = fontDropdown.options[fontDropdown.selectedIndex].value;
     //create new input at newHeadingx y
+    if(elementDragging != null)
+    {
+      //elementDragging is the tool dragged
+      if(elementDragging.id == 'h')
+      {
+        activeInput = document.createElement('input');
+        activeInput.classList.add("headingInput");
+        activeInput.type = 'text';
+      }
+      else if(elementDragging.id == 'h2')
+      {
+        activeInput = document.createElement('input');
+        activeInput.classList.add("heading2Input");
+        activeInput.type = 'text';
+      }
+      else if(elementDragging.id == 'p')
+      {
+        activeInput = document.createElement('textarea');
+        activeInput.classList.add("paragraphInput");
+        activeInput.rows = '4';
+        activeInput.cols = '50';
+      }
+      this.htmlElement = activeInput;
+      this.htmlElement.id = this.id;
+      this.updateHtmlElement();//position, size, color
+    }
 
-    //elementDragging is the tool dragged
-    if(elementDragging.id == 'h')
-    {
-      activeInput = document.createElement('input');
-      activeInput.classList.add("headingInput");
-      activeInput.type = 'text';
-    }
-    else if(elementDragging.id == 'h2')
-    {
-      activeInput = document.createElement('input');
-      activeInput.classList.add("heading2Input");
-      activeInput.type = 'text';
-    }
-    else if(elementDragging.id == 'p')
-    {
-      activeInput = document.createElement('textarea');
-      activeInput.classList.add("paragraphInput");
-      activeInput.rows = '4';
-      activeInput.cols = '50';
-    }
-    this.htmlElement = activeInput;
-    this.htmlElement.id = this.id;
-    this.updateHtmlElement();//position, size, color
 
     activeInput.onmousedown = function(event)
 		{
@@ -371,7 +374,7 @@ function init()
   allTools.push(toolHeading);
   allTools.push(toolImage);
 
-  colorInput = document.getElementById("colorInput");
+  // colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
   fontDropdown = document.getElementById("fontSelector");
@@ -1306,20 +1309,54 @@ function placeDiv(x, y)
 
 function copyFocusedElements()
 {
-  if(focusedElement != null)
+  //for all elements, do copyElement
+  for(let i = 0; i < selectedElements.length; i++)
+  {
+    copyElement(selectedElements[i]);
+  }
+
+  // selectedElements = []; //the new elements
+}
+
+function copyElement(element)
+{
+  if(element != null)
   {
     //need checks for each element type, text, image, div
       //if text, change .text/.value to match,
 
     //need check for multiple copy i.e. if selectedElements.length > 1
-    clipboardItem =  new Element(focusedElement.id, focusedElement.x,   focusedElement.y , focusedElement.width, focusedElement.height, focusedElement.colorIndex ,'circle');
-    clipboardItem.x += 0.03*canvasWidth;
-    clipboardItem.y += 0.03*canvasWidth;
-    clipboardItem.opacity = focusedElement.opacity;
-    focusedElement.isFocus = false;
+
+    let clipboardItem;
+    if(element instanceof Text)
+    {
+      //clone html element
+      let newText = element.htmlElement.cloneNode(true);
+      activeInput = newText;
+      clipboardItem = new Text(element.id, element.x+0.03*canvasWidth,   element.y+0.03*canvasWidth, element.width, element.height, element.colorIndex ,'heading');
+      clipboardItem.fontColor = element.fontColor;
+      clipboardItem.fontSize = element.fontSize;
+      clipboardItem.htmlElement = newText;
+      clipboardItem.updateHtmlElement();
+    }
+    else if(element instanceof BuildImage)
+    {
+      let newImage = element.htmlElement.cloneNode(true);
+      clipboardItem.htmlElement = newImage;
+      clipboardItem.updateHtmlElement();
+    }
+    else
+    {
+      clipboardItem =  new Element(element.id, element.x,   element.y , element.width, element.height, element.colorIndex ,'circle');
+      clipboardItem.x += 0.03*canvasWidth;
+      clipboardItem.y += 0.03*canvasWidth;
+      clipboardItem.opacity = element.opacity;
+    }
+
+    element.isFocus = false;
     focusedElement = clipboardItem;
-    selectedElements = [];
-    selectedElements[0] = focusedElement;
+    // selectedElements = [];
+    // selectedElements[0] = focusedElement;
     clipboardItem.isFocus = true;
     allElements.push(clipboardItem);
   }
