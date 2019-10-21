@@ -774,12 +774,7 @@ window.onmousedown = function(e)
   }//trash icon
   else if(collides(e.clientX, e.clientY, 5, 5, trashPositions[0],trashPositions[1],trashPositions[2],trashPositions[3]))
   {
-    if(focusedElement instanceof Element
-    && !(focusedElement instanceof Text))
-    {
-      allElements.splice(allElements.indexOf(focusedElement), 1);
-      selectedElements.splice(allElements.indexOf(focusedElement), 1);
-    }
+    deleteSelectedElements();
   }
   //only works if background of workspace clicked, need deselect hoykey?
   if(nothingClicked)
