@@ -31,7 +31,7 @@ var allElements, allText;
 var shapeColor;
 
 var focusedElement;
-var selectedElements;
+var selectedElements, newElements;
 
 const RESIZE_TAB = 0;
 const MOVEMENT_TAB = 1;
@@ -350,6 +350,7 @@ function init()
   allText = [];
   allTools = [];
   selectedElements = [];
+  newElements = [];
   trashPositions= [canvasWidth-1.1*toolBarWidth, 0.375*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   copyPositions = [canvasWidth-0.45*toolBarWidth, 0.375*canvasHeight, 0.03*canvasWidth, 0.03*canvasWidth];
   margin = toolWidth/3;
@@ -1045,12 +1046,7 @@ window.onkeydown = function(e)
 
   switch (e.keyCode) {
     case 46: //delete
-      if(focusedElement instanceof Element
-      && !(focusedElement instanceof Text))
-      {
-        allElements.splice(allElements.indexOf(focusedElement), 1);
-        selectedElements.splice(allElements.indexOf(focusedElement), 1);
-      }
+      deleteSelectedElements();
       break;
     case 17: //control key
       controlHeld = true;
@@ -1161,6 +1157,27 @@ function bringToFront(element)
 {
   allElements.push(element);
   allElements.splice(allElements.indexOf(element), 1);
+}
+
+function deleteSelectedElements()
+{
+
+  for(var i=0; i<selectedElements.length; i++)
+  {
+    let elementToDelete = selectedElements[i];
+    if(elementToDelete instanceof Element
+    && !(elementToDelete instanceof Text))
+    {
+      allElements.splice(allElements.indexOf(elementToDelete), 1);
+    }
+    else //just text
+    {
+      //remove object aswel as html element
+      elementToDelete.htmlElement.remove();
+      allElements.splice(allElements.indexOf(elementToDelete), 1);
+    }
+  }
+  selectedElements = [];
 }
 
 window.onkeyup = function(e)
@@ -1304,13 +1321,14 @@ function placeDiv(x, y)
 
 function copyFocusedElements()
 {
+  newElements = [];
   //for all elements, do copyElement
   for(let i = 0; i < selectedElements.length; i++)
   {
     copyElement(selectedElements[i]);
   }
 
-  // selectedElements = []; //the new elements
+  selectedElements = newElements; //the new elements
 }
 
 function copyElement(element)
@@ -1352,7 +1370,7 @@ function copyElement(element)
     }
 
     clipboardItem.opacity = element.opacity;
-
+    newElements.push(clipboardItem);
     element.isFocus = false;
     focusedElement = clipboardItem;
     // selectedElements = [];
