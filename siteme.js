@@ -384,6 +384,7 @@ function init()
   colorInput.value = divSquare.color;
 
   buildFontSelector();
+
   //need delay to wait for google font to load
   setTimeout(draw, 500);
   // draw();
@@ -681,6 +682,7 @@ window.onmousedown = function(e)
       {
         colorInput.value = focusedElement.fontColor;
         updateTextSlider();
+        updateFontSelector();
         showTextTools();
       }
 	  // else
@@ -1573,4 +1575,21 @@ function updateTextSlider()
 {
   let sizeAsInt = parseInt(focusedElement.fontSize.substring(0, focusedElement.fontSize.length-2), 10);
   fontSizeInput.value = sizeAsInt*10;
+}
+
+function updateFontSelector()
+{
+  // var val = "Fish";
+  // var sel = document.getElementById('sel');
+  let selectedElementFont = focusedElement.font;
+  var opts = fontDropdown.options;
+  for (var opt, j = 0; opt = opts[j]; j++)
+  {
+    if (opt.value == selectedElementFont)
+    {
+      fontDropdown.selectedIndex = j;
+      fontDropdown.style.fontFamily = selectedElementFont;
+      break;
+    }
+  }
 }
