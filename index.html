@@ -30,11 +30,12 @@
     <div id='darkenBackground'></div>
 
     <div id='introModal'>
-      <video id='introVid' autoplay loop muted>
-        <source src="dragdrop.mp4" type="video/mp4">
+      <video id='introVid' src="dragdrop.mp4" type="video/mp4" autoplay loop muted>
+        <!-- <source src="dragdrop.mp4" type="video/mp4"> -->
       </video>
-      <h1>Drag and drop to build</h1>
+      <h1 id='introText'>Drag and drop to build</h1>
       <h2 onmousedown='closeIntro()'>GO!</h2>
+      <h2 id = 'nextButton' onmousedown='nextVideo()'>Next</h2>
 		</div>
 
     <script src="siteme.js"></script>

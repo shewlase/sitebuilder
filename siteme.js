@@ -1532,6 +1532,14 @@ function closeIntro()
   document.getElementById('darkenBackground').style.display = 'none';
 }
 
+//change video source,
+function nextVideo()
+{
+  document.getElementById('introVid').src = 'edit.mp4';
+  document.getElementById('introText').innerHTML = 'Edit with tools on the right';
+  document.getElementById('nextButton').style.display = 'none';
+
+}
 
 
 var fontDropdown;

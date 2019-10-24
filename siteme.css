@@ -1,4 +1,4 @@
-html,  body
+body
 {
   margin: 0;
   overflow-x: hidden;
@@ -7,16 +7,34 @@ html,  body
 h1
 {
   /* font-family: 'Paytone One', sans-serif; */
-  font-family: 'Baloo', sans-serif;
-  /* font-family: 'Righteous', sans-serif; */
+  /* font-family: 'Baloo', sans-serif; */
+  font-size: 2vw;
+  width: 100%;
+  text-align: center;
+  font-family: 'Righteous', sans-serif;
 }
 
 h2
 {
-  text-align: right;
+  text-align: left;
+  font-size: 2vw;
   font-family: 'Righteous', sans-serif;
+  margin-left: 2vw;
+  width: 5vw;
 }
 
+h2:hover
+{
+  color: green;
+  cursor: pointer;
+}
+
+#nextButton
+{
+  position:absolute;
+  bottom: 1vw;
+  right: 2vw;
+}
 
 #canvas
 {
@@ -67,11 +85,11 @@ h2
 {
   /* width: 90vw; */
   /* height: 80vh; */
-  display: none;
-  position: absolute;
+  /* display: none; */
+  position: fixed;
   background-color: white;
   left: 20vw;
-  top: 10vh;
+  top: 5vh;
   /* border: 1vw solid black; */
 }
 
@@ -85,8 +103,8 @@ h2
   width: 100vw;
   height: 100vh;
   background-color: rgba(0,0,0,0.4);
-  position: absolute;
-  display: none;
+  position: fixed;
+  /* display: none; */
 }
 
 
