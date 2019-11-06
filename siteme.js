@@ -25,6 +25,7 @@ var dragTabSize = 0.2*toolWidth;
 var dragTabColor = 'gray';
 
 var divSquare, divSquare2, divSquare3;
+var isNextVideo = false;
 
 var colorInput;
 var allElements, allText;
@@ -1535,9 +1536,19 @@ function closeIntro()
 //change video source,
 function nextVideo()
 {
-  document.getElementById('introVid').src = 'edit.mp4';
-  document.getElementById('introText').innerHTML = 'Edit with tools on the right';
-  document.getElementById('nextButton').style.display = 'none';
+
+  if(!isNextVideo)
+  {
+    document.getElementById('introVid').src = 'edit.mp4';
+    document.getElementById('introText').innerHTML = 'Edit with tools on the right';
+    document.getElementById('nextButton').innerHTML = "Let's go!"
+    isNextVideo = true;
+    // document.getElementById('nextButton').style.display = 'none';
+  }
+  else {
+    closeIntro();
+  }
+
 
 }
 
