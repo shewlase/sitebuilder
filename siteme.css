@@ -11,19 +11,15 @@ h1
   font-size: 2vw;
   width: 50%;
   margin-left: 3vw;
-  /* color: #85c3dc; */
-  /* text-align: center; */
   font-family: 'Righteous', sans-serif;
 }
 
-/* h2 */
 button
 {
   text-align: left;
   font-size: 1.5vw;
   font-family: 'Righteous', sans-serif;
   margin-left: 2vw;
-  /* width: 5vw; */
   padding: 0.5vw;
   background-color: #ffce67;
   border: 0.2vw solid black;

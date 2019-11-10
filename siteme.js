@@ -21,15 +21,25 @@ var toolWidth = 0.6*toolBarWidth;
 var workSpace = [toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight];
 
 var workSpaceCenterX = 0.49*canvasWidth;
-var dragTabSize = 0.2*toolWidth;
-var dragTabColor = 'gray';
 
+
+var colorInput;
+var editToolsVisible = false;
+var textSliderVisible = false;
+
+var fontSliderSize;
+
+
+//variables for elements
 var divSquare, divSquare2, divSquare3;
 var isNextVideo = false;
 
-var colorInput;
 var allElements, allText;
 var shapeColor;
+var clipboardItem;
+
+var dragTabSize = 0.2*toolWidth;
+var dragTabColor = 'gray';
 
 var focusedElement;
 var selectedElements, newElements;
@@ -38,16 +48,11 @@ const RESIZE_TAB = 0;
 const MOVEMENT_TAB = 1;
 const COLOR_TAB = 2;
 
-
+//input variables
 var controlHeld = false;
 var shiftHeld = false;
 var mouseX, mouseY;
-var clipboardItem;
 
-var editToolsVisible = false;
-var textSliderVisible = false;
-
-var fontSliderSize;
 //Class definitions
 class Object
 {
@@ -72,16 +77,6 @@ class Object
   draw(ctx)
   {
     this.drawWholeArea(ctx);
-    //for tools
-    // if(this.id.charAt(0) == 'h' || this.id.charAt(0) == 'p')//should jus tbe first letter H or p
-    // {
-    //   ctx.font = toolBarWidth/4+'px Luckiest Guy';
-    //   // context.font = 0.5*bubbleHeight+'px Righteous';
-    //   // var wordWidth = context.measureText(this.messageToSend).width;
-    //   ctx.fillStyle='black';
-    //   // ctx.fillText(messageToSend, bubbleX+(0.25*width), bubbleY+(0.75*height));
-    //   ctx.fillText(this.id, this.x+0.1*this.width, this.y+0.8*this.height);
-    // }
     //check if image assigned
     if(this.image != null)
     {
@@ -120,13 +115,6 @@ class Element extends Object
   draw(ctx)
   {
     this.drawWholeArea(ctx);
-
-    //only draw edit areas if focused, moved to global drawWall
-      // so will be drawn above everything
-    // if(this.isFocus)
-    // {
-    //   this.drawAllTabs(ctx);
-    // }
   }
 
   drawAllTabs(ctx)
@@ -155,10 +143,8 @@ class Element extends Object
   {
     var resizeTab = [this.x+this.width, this.y+this.height, dragTabSize, dragTabSize];
     var positionTab = [this.x+0.5*this.width-0.5*dragTabSize, this.y+this.height, dragTabSize, 2*dragTabSize];
-    // var colorTab = [this.x+0.75*this.width, this.y+this.height, dragTabSize, dragTabSize];
 
     this.tabList = [resizeTab, positionTab];
-    // this.tabList = [resizeTab, positionTab, colorTab];
   }
 }
 
@@ -171,13 +157,12 @@ class Text extends Element
     this.fontColor = '#000000';
     let newSize = fontSizeInput.value/10;
     fontSliderSize = newSize+'vw';
-    // focusedElement.htmlElement.style.fontSize = fontSliderSize;
     this.fontSize = fontSliderSize;
     this.height = (newSize/100)*1.05*canvasWidth;
 
 
     this.font = fontDropdown.options[fontDropdown.selectedIndex].value;
-    //create new input at newHeadingx y
+    //create new input at newHeading x y
     if(elementDragging != null)
     {
       //elementDragging is the tool dragged
@@ -187,35 +172,20 @@ class Text extends Element
         activeInput.classList.add("headingInput");
         activeInput.type = 'text';
       }
-      else if(elementDragging.id == 'h2')
-      {
-        activeInput = document.createElement('input');
-        activeInput.classList.add("heading2Input");
-        activeInput.type = 'text';
-      }
-      else if(elementDragging.id == 'p')
-      {
-        activeInput = document.createElement('textarea');
-        activeInput.classList.add("paragraphInput");
-        activeInput.rows = '4';
-        activeInput.cols = '50';
-      }
       this.htmlElement = activeInput;
       this.htmlElement.id = this.id;
       this.updateHtmlElement();//position, size, color
     }
 
-
     activeInput.onmousedown = function(event)
 		{
-			//make this focus
+			//make this input focus
       if(focusedElement != null)
       {
         focusedElement.isFocus = false;
         if(focusedElement.type == 'heading' || focusedElement.type == 'paragraph')
         {
         }
-        // elementDragging.isFocus = false;
       }
       var thisInput = event.target;
       var idToCheck = thisInput.id;
@@ -238,26 +208,17 @@ class Text extends Element
     {
       var thisInput = event.target;
       var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
-      // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
-      // ctx.font = fontSize+' '+; //just for measurement
       ctx.font = fontSize+' Righteous'; //just for measurement, change to match font selector
-      // let fontSizeVw = element.
+
       var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
       var idToCheck = thisInput.id;
       if(idToCheck.charAt(0) == 'h')
       {
         var index = parseInt(idToCheck.substring(7), 10);
-        // setTimeout(function(){
           thisInput.style.width = wordWidth+'px';
           var element = allElements[index];
           element.width = wordWidth;
-        // }, 5);
       }
-      // else if(idToCheck.charAt(0) == 'p')
-      // {
-      //   var index = parseInt(idToCheck.substring(9), 10);
-      //   var element = allElements[index];
-      // }
     }
 
     document.getElementsByTagName('body')[0].insertBefore(activeInput, colorInput);
@@ -268,19 +229,14 @@ class Text extends Element
   {
     var thisInput = this.htmlElement;
     var fontSize = window.getComputedStyle(thisInput).getPropertyValue('font-size');
-    // ctx.font = fontSize+' Luckiest Guy'; //just for measurement
     ctx.font = fontSize+' Righteous'; //just for measurement
-    // let fontSizeVw = element.
     var wordWidth = canvasWidth*0.02+ctx.measureText(thisInput.value).width;
     var idToCheck = thisInput.id;
-    // if(idToCheck.charAt(0) == 'h')
-    // {
     var index = parseInt(idToCheck.substring(7), 10);
     thisInput.style.width = wordWidth+'px';
     var element = allElements[index];
     element.width = wordWidth;
     this.updateHtmlElement();
-    // }
   }
 
   draw(ctx)
@@ -314,25 +270,12 @@ class BuildImage extends Element
   constructor(id, x, y, width, height, colorIndex, type)
   {
     super(id, x, y, width, height, colorIndex, type);
-    // var newHtmlImage = document.createElement('img');
-    // this.htmlElement = newHtmlImage;
-    // this.htmlElement.id = this.id;
     this.ratio = 1;
 
     this.src = '';
     this.canvasImage = new Image();
     this.canvasImage.src = this.src;
-
-    // this.updateHtmlElement();
   }
-
-  // updateHtmlElement()
-  // {
-  //   this.htmlElement.style.left = this.x+'px';
-  //   this.htmlElement.style.top = this.y+'px';
-  //   this.htmlElement.style.width = this.width+'px';
-  //   this.htmlElement.style.height = this.height+'px';
-  // }
 
   draw(ctx)
   {
@@ -365,7 +308,7 @@ function init()
     //blue, yellow orange
   // colors = ['#2176AE','#FBB13C', '#FE6847', 'white', 'black'];
   // colors = ['#F4C95D','#DD7230', '#854D27'];
-  //postions need calculating, i*margin, if i%2==0 add top margin etc)
+
   divSquare = new Object('divSquare',margin, 0.1*canvasHeight, toolWidth, toolWidth, 2);
   divSquare.color = '#85c3dc';
   toolHeading = new Object('h', margin, 0.2*canvasHeight, toolWidth, toolWidth, 1, textSizeImage);
@@ -376,7 +319,6 @@ function init()
   allTools.push(toolHeading);
   allTools.push(toolImage);
 
-  // colorInput = document.getElementById("colorInput");
   fontSizeInput = document.getElementById("fontSizeSlider");
   opacitySlider = document.getElementById("opacitySlider");
   fontDropdown = document.getElementById("fontSelector");
@@ -386,9 +328,8 @@ function init()
 
   buildFontSelector();
 
-  //need delay to wait for google font to load
+  //need delay to wait for fonts to load
   setTimeout(draw, 500);
-  // draw();
 }
 
 function drawToolbar(ctxToolbar)
@@ -488,7 +429,6 @@ function checkClickTab(clickX, clickY)
 function elementCollides(element1, element2)
 {
   return collides(element1.x-2, element1.y-2, element1.width+4, element1.height+4, element2.x-2, element2.y-2, element2.width+4, element2.height+4);
-  // return collides(element1.x, element1.y, element1.width, element1.height, element2.x, element2.y, element2.width, element2.height);
 }
 
 function collides(object1x, object1y, object1width, object1height, object2x, object2y, object2width, object2height)
@@ -507,6 +447,7 @@ function collides(object1x, object1y, object1width, object1height, object2x, obj
 		}
 	return doesCollide;
 }
+
 var autoPosBuffer = 50;
 function checkAutoPosition(element)
 {
@@ -520,10 +461,6 @@ function checkAutoPosition(element)
       if(elementCollides(element, previousEl))
       {
         //check side collided
-        // if(element.x < previousEl.x+previousEl.width && element.x > previousEl.x+previousEl.width-autoPosBuffer)
-        // {
-        //   element.x = previousEl.x+previousEl.width;
-        // }
         if(element.width < previousEl.width && element.width > previousEl.width - autoPosBuffer
           || element.width > previousEl.width && element.width < previousEl.width + autoPosBuffer)
         {
@@ -536,11 +473,6 @@ function checkAutoPosition(element)
           repositioned = true;
         }
       }
-
-      // if(repositioned)
-      // {
-      //
-      // }
     }
   }
 }
@@ -549,10 +481,8 @@ function checkAutoCenter(element)
 {
   var elementCenterX = elementDragging.x+0.5*elementDragging.width;
   if(elementCenterX > workSpaceCenterX-autoPosBuffer && elementCenterX < workSpaceCenterX+autoPosBuffer)
-  // if(elementCenterX > 0.49*canvasWidth-autoPosBuffer && elementCenterX < 0.49*canvasWidth+autoPosBuffer)
   {
     elementDragging.x = workSpaceCenterX - 0.5*elementDragging.width;
-    // elementDragging.x = 0.49*canvasWidth - 0.5*elementDragging.width;
   }
 }
 
@@ -587,7 +517,6 @@ var focusedElement;
 var shapeToCheck;
 window.onmousedown = function(e)
 {
-  // focusedElement = null;
   elementDragging = null;
   leftMouseDown = true;
   let nothingClicked = true;
@@ -607,16 +536,13 @@ window.onmousedown = function(e)
       nothingClicked = false;
       selectedElements = [];
       opacitySlider.value = 100;
-      //need unfocusAllElements() function?
       if(focusedElement != null)
       {
         focusedElement.isFocus = false;
-        // if(focusedElement.type == 'heading' || focusedElement.type == 'paragraph')
         if(shapeToCheck instanceof Text)
         {
           // focusedElement.htmlElement.style.backgroundColor = 'transparent';
         }
-        // elementDragging.isFocus = false;
       }
     }
     else
@@ -635,22 +561,15 @@ window.onmousedown = function(e)
 
     nothingClicked = !tabClicked;
 
-    // var tabs = shapeToCheck.tabList;
                                     //if clicked shape/div
     if(collides(e.pageX-(0.5*clickPadding), e.pageY-(0.5*clickPadding), clickPadding, clickPadding, shapeToCheck.x, shapeToCheck.y, shapeToCheck.width, shapeToCheck.height))
     {
-
-      // if(shapeToCheck instanceof Text)
-      // {
-      //   shapeToCheck.htmlElement.focus();
-      // }
       nothingClicked = false;
 
       if(focusedElement != null)
       {
         //unfocus previous focused element
         focusedElement.isFocus = false;
-        // elementDragging.isFocus = false;
       }
       focusedElement = shapeToCheck;
       focusedElement.isFocus = true;
@@ -659,7 +578,6 @@ window.onmousedown = function(e)
 
       if(!controlHeld)
       {
-      // selectedElements = [];
         if(selectedElements.length < 2)
         {
           selectedElements = [];
@@ -686,26 +604,19 @@ window.onmousedown = function(e)
         updateFontSelector();
         showTextTools();
       }
-	  // else
-	  // {
-    //
-	  // }
       setAllTextFocusable(false);
       //needs to be for every shape
       for(var i=0; i<selectedElements.length; i++)
       {
         preDragPositions[i] = [selectedElements[i].x, selectedElements[i].y];
       }
-      // startOfDrag = [shapeToCheck.x, shapeToCheck.y];
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
 
     }
                                     //if clicked resize tab
-    // if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+shapeToCheck.width, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 2*dragTabSize)
-    // && shapeToCheck.isFocus)
-    else if(tabClicked && whichTab == RESIZE_TAB)  //tablist[0] = resizeTab, could be RESIZE_TAB (= 0)
+    else if(tabClicked && whichTab == RESIZE_TAB)
     {
       isResizing = true;
       sizeStartOfDrag = [shapeToCheck.width, shapeToCheck.height];
@@ -713,14 +624,11 @@ window.onmousedown = function(e)
       elementDragging = shapeToCheck;
       break;
     }                                   //movement tab
-    // else if(collides(e.pageX, e.pageY, 10, 10, shapeToCheck.x+0.5*shapeToCheck.width-0.5*dragTabSize, shapeToCheck.y+shapeToCheck.height, 2*dragTabSize, 3*dragTabSize)
-    // && shapeToCheck.isFocus)
     else if(tabClicked && whichTab == MOVEMENT_TAB)
     {
       if(focusedElement != null)
       {
         focusedElement.isFocus = false;
-        // elementDragging.isFocus = false;
       }
       focusedElement = shapeToCheck;
       shapeToCheck.isFocus = true;
@@ -731,7 +639,6 @@ window.onmousedown = function(e)
       {
         preDragPositions[i] = [selectedElements[i].x, selectedElements[i].y];
       }
-      // startOfDrag = [shapeToCheck.x, shapeToCheck.y];
       mouseStartOfDrag = [e.pageX, e.pageY];
       elementDragging = shapeToCheck;
       break;
@@ -796,7 +703,6 @@ window.onmousedown = function(e)
   	fontDropdown.style.opacity = 0.0;
     textSliderVisible = false;
   }
-  // setTestLabel(e.pageX +'y'+ e.pageY +'vs'+ divSquare.x +'y'+ divSquare.y,);
   draw();
 }
 
@@ -804,7 +710,6 @@ window.onmousemove = function(e)
 {
   // xDifference = e.pageX - mouseStartOfDrag[0];
   // yDifference = e.pageY - mouseStartOfDrag[1];
-
 
   //need to separate placing new shape and moving placed shape
   mouseX = e.pageX;
@@ -833,9 +738,6 @@ window.onmousemove = function(e)
       let elementToMove = selectedElements[i];
       elementToMove.x = preDragPositions[i][0] + xDifference;
       elementToMove.y = preDragPositions[i][1] + yDifference;
-      // elementToMove.x = startOfDrag[0] + xDifference;
-      // elementToMove.y = startOfDrag[1] + yDifference;
-      // if(elementDragging.type == 'heading' || elementDragging.type == 'paragraph')
       if(elementToMove instanceof Text)
       {
         elementToMove.updateHtmlElement();
@@ -849,12 +751,10 @@ window.onmousemove = function(e)
     xDifference = e.pageX - mouseStartOfDrag[0];
     yDifference = e.pageY - mouseStartOfDrag[1];
     elementDragging.width = sizeStartOfDrag[0] + xDifference;
-    //if image, keep original ratio (ratio = width/height)
     if(shapeToCheck instanceof BuildImage)
     {
       let ratio = elementDragging.ratio;
       elementDragging.height = elementDragging.width/ratio;
-      // elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
     else if(shapeToCheck.id == 'circle' && shiftHeld)
     {
@@ -867,7 +767,6 @@ window.onmousemove = function(e)
 
     if(shapeToCheck instanceof Text)
     {
-      // var input = document.getElementById(elementDragging.id);
       shapeToCheck.updateHtmlElement();
     }
 
@@ -884,14 +783,11 @@ window.onmouseup = function(e)
   {
     isPlacingNewShape = false;
     //only if dropped in work area
-    // if(collides(e.pageX, e.pageY, 2, 2, workSpace)) //this works?
     if(collides(e.pageX, e.pageY, 2, 2, toolBarWidth, 0, canvasWidth-toolBarWidth, canvasHeight))
     {
       //create new div
-      // if(elementDragging.id == 'divSquare')//tool id
       if(elementDragging.id.substring(0,3) == 'div')//tool id
       {
-        // var droppedShape = new Shape('square', elementDragging.x,   elementDragging.y , elementDragging.width, elementDragging.height, elementDragging.color ,'square');
         //id should be 'square'+allElements.length, editable in text area
         var droppedShape;
         if(elementDragging.id == 'divCircle')
@@ -904,7 +800,6 @@ window.onmouseup = function(e)
           droppedShape = new Element('square', elementDragging.x,   elementDragging.y+window.scrollY , 2*elementDragging.width, 2*elementDragging.height, elementDragging.colorIndex ,'square');
         }
         allElements.push(droppedShape);
-        // droppedShape.isFocus = true;
         focusedElement = droppedShape;
         selectedElements.push(droppedShape);
         showEditTools();
@@ -913,19 +808,16 @@ window.onmouseup = function(e)
       {
         //needs to be extension of shape
         //should take font size for height and width
-        // var newHeading = [elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth];
         var id = "heading" +(allElements.length);
         var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*2,  0.04*canvasWidth, 'black', 'heading');
-        // var newHeading = new Text(id, elementDragging.x, elementDragging.y+window.scrollY,  toolWidth*4,  toolWidth, 'black', 'heading');
+
         if(elementDragging.id.charAt(1) == '1')
         {
           newHeading.height = toolWidth*1.35;
           newHeading.fontSize = fontSliderSize;
           newHeading.updateHtmlElement();//position, size, color
         }
-        // allHeadings.push(newHeading);
         allElements.push(newHeading);
-        // var insertBeforeMe = document.querySelector("#colorInput");
         focusedElement = newHeading;
         selectedElements.push(newHeading);
         showEditTools();
@@ -935,9 +827,7 @@ window.onmouseup = function(e)
       {
         var id = "paragraph" +(allElements.length);
         var newText = new Text(id, elementDragging.x, elementDragging.y,  toolWidth*4,  toolWidth, 'black', 'paragraph');
-        // allHeadings.push(newHeading);
         allElements.push(newText);
-        // var insertBeforeMe = document.querySelector("#colorInput");
         focusedElement = newText;
         selectedElements.push(newText);
       }
@@ -985,7 +875,6 @@ window.onmouseup = function(e)
     {
       let ratio = elementDragging.ratio;
       elementDragging.height = elementDragging.width/ratio;
-      // elementDragging.height = sizeStartOfDrag[1] + yDifference;
     }
     else if(shapeToCheck.id == 'circle' && shiftHeld)
     {
@@ -1011,11 +900,6 @@ window.onmouseup = function(e)
     elementDragging.updateHtmlElement();
     elementDragging.htmlElement.focus();
   }
-
-  // else if(elementDragging.id == 'circle')
-  // {
-  //   //dont auto center
-  // }
   else //only auto pos and center divs
   {
     if(elementDragging != null)
@@ -1026,14 +910,6 @@ window.onmouseup = function(e)
   }
   draw();
 }
-
-//prevents default page scrolling hotkeys
-// toolCanvas.addEventListener("keydown", function(e) {
-//     // space and arrow keys
-//     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-//         e.preventDefault();
-//     }
-// }, false);
 
 window.onkeydown = function(e)
 {
